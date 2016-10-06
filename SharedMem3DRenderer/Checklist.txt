@@ -1,0 +1,10 @@
+Todo
+
+Change order if you want.
+
+
+- Get world matrix from maya
+- Get a mesh/meshes from maya
+- Update single vertices when changed in maya
+- Get camera, changed when changed in maya.
+- Get materials
