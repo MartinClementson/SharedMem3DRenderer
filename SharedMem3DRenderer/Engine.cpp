@@ -211,7 +211,7 @@ Engine::~Engine()
 	
 	SAFE_RELEASE(BackBufferTexture);
 
-	gDeviceContext->ClearState();
+	//gDeviceContext->ClearState();
 	SAFE_RELEASE(gDeviceContext);
 
 

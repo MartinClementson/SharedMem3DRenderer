@@ -6,7 +6,7 @@
 #define WINDOWED true
 #define WIREFRAME false
 #define VSYNC 1 //1 == ON, 0 = OFF
-#define DEBUG 2 /* 2 = debug,  or : D3D11_CREATE_DEVICE_DEBUG */
+#define DEBUG 0 /* 2 = debug,  or : D3D11_CREATE_DEVICE_DEBUG */
 #define SAFE_RELEASE(p) { if ( (p) ) { (p)->Release(); (p) = 0; } }
 
 #pragma once
