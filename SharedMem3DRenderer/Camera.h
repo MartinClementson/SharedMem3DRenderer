@@ -14,7 +14,7 @@ private:
 	ID3D11Device * gDevice;
 	ID3D11DeviceContext * gDeviceContext;
 
-	XMFLOAT4 camPosition	= { 0,  0,  -5,   1 };
+	XMFLOAT4 camPosition	= { 0,  0,  5,   1 };
 	//XMFLOAT4 camPosition    = { 0,  0,  0,   1 };
 	XMFLOAT4 camTarget		= { 0,  0,  0,   1 };
 	XMFLOAT4 camUp			= { 0,  1,  0,   0 };

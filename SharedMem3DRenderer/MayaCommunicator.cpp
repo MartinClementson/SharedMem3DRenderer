@@ -64,8 +64,8 @@ bool MessageHandler::NewMesh(MeshMessage * msg)
 
 
 	DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
-		1, 0, 0, 0,
-		0, 1, 0, 0,
+		-1, 0, 0, 0,
+		0, -1, 0, 0,
 		0, 0, -1, 0,
 		0, 0, 0, 1);
 
@@ -83,22 +83,26 @@ bool MessageHandler::NewMesh(MeshMessage * msg)
 
 	DirectX::XMStoreFloat4x4(&matrixToSend, world);
 
-	ResourceManager::GetInstance()->AddNewMesh(msg->meshName, vertices.get(), msg->vertexCount, indices.get(), msg->indexCount, &matrixToSend);
+	ResourceManager::GetInstance()->AddNewMesh(msg->nodeName, vertices.get(), msg->vertexCount, indices.get(), msg->indexCount, &matrixToSend);
 
 	return true;
 }
 
 bool MessageHandler::Transform(TransformMessage * msg)
 {
+//DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
+//	-1, 0, 0,  0,
+//	0,  1, 0, 0,
+//	0, 0, -1, 0,
+//	0, 0, 0, 1);
+
+
+	
 	DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
-		1, 0, 0,  0,
-		0,  1, 0, 0,
-		0, 0,  -1, 0,
-		0, 0, 0, 1);
-
-
-	
-	
+		-1, 0, 0, 0,
+		 0, -1, 0, 0,
+		 0, 0, -1, 0,
+		 0, 0, 0, 1);
 	
 	
 	
@@ -114,12 +118,63 @@ bool MessageHandler::Transform(TransformMessage * msg)
 		
 		DirectX::XMMATRIX world = DirectX::XMMATRIX(msg->matrix);
 
-	
 		
-			
+		//world.r[3].m128_f32[0] *= -1;
+		//world.r[3].m128_f32[1] *= -1;
+		//world.r[3].m128_f32[2] *= -1;
+		//float temp = world.r[3].m128_f32[0];
+		//world.r[3].m128_f32[0] *= world.r[3].m128_f32[2];
+		//world.r[3].m128_f32[2] *= temp;
+
+		
+		//world.r[3].m128_f32[1] *= -1;
+
 		world = XMMatrixMultiply( world, mToggle_XZ);
  		world = XMMatrixTranspose(world);
 		
+
+
+		DirectX::XMFLOAT4X4 matrixToSend;
+
+		DirectX::XMStoreFloat4x4(&matrixToSend, world);
+
+		sceneTransforms->at(msg->nodeName)->SetWorldMatrix(&matrixToSend);
+		//dynamic_cast<ModelNode*>(sceneTransforms->at(msg->nodeName))->SetWorldMatrix(matrixToSend);
+	}
+	else
+		return false;
+
+	return true;
+}
+
+bool MessageHandler::UpdateCamera(CameraMessage * msg)
+{
+
+	DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
+		-1, 0, 0, 0,
+		0, -1, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1);
+
+
+
+
+	std::map < string, TransformNode*> *sceneTransforms;
+
+	sceneTransforms = &ResourceManager::GetInstance()->sceneTransforms;
+
+	if (sceneTransforms->find(msg->nodeName) != sceneTransforms->end())
+	{
+
+		//the model exists
+
+		DirectX::XMMATRIX world = DirectX::XMMATRIX(msg->viewMatrix);
+		world.r[3].m128_f32[0] *= -1;
+		world.r[3].m128_f32[1] *= -1;
+		world.r[3].m128_f32[2] *= -1;
+		world = XMMatrixMultiply(world, mToggle_XZ);
+		world = XMMatrixTranspose(world);
+
 
 
 		DirectX::XMFLOAT4X4 matrixToSend;
@@ -163,7 +218,12 @@ bool MessageHandler::TranslateMessage(char * msg, size_t length)
 	case VERTEX:
 		break;
 	case CAMERA:
+	{
+
+		CameraMessage * cameraMessage = (CameraMessage*)(msg + sizeof(MainMessageHeader));
+		UpdateCamera(cameraMessage);
 		break;
+	}
 	case TRANSFORM:
 	{
 		TransformMessage * transFormHeader = (TransformMessage*)(msg + sizeof(MainMessageHeader));
@@ -173,18 +233,6 @@ bool MessageHandler::TranslateMessage(char * msg, size_t length)
 	case MATERIAL:
 		break;
 	}
-
-
-	//float matrix[16];
-	//memcpy(matrix, msg, sizeof(float)*16);
-	//
-	//DirectX::XMMATRIX world = DirectX::XMMATRIX(matrix);
-	//world = XMMatrixTranspose(world);
-	//
-	//DirectX::XMFLOAT4X4 matrixToSend;
-	//
-	//DirectX::XMStoreFloat4x4(&matrixToSend, world);
-	//ResourceManager::GetInstance()->testModel.SetWorldMatrix(matrixToSend);
 
 
 

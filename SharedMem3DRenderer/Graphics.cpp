@@ -27,7 +27,7 @@ void Graphics::Render()
 	
 	resManager->camera.UpdateIfDirty();
 	shaderManager.setActiveShaders(ShaderTypes::TEXTURESHADER);
-	//resManager->testModel->Render();
+	resManager->testModel->Render();
 	resManager->UpdateIfDirty();
 	for (size_t i = 0; i < resManager->Models()->size(); i++)
 	{
