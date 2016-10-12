@@ -48,16 +48,16 @@ void Camera::UpdateCamBuffer()
 	//Transpose view matrix
 
 	//world = XMMatrixTranspose(world);
-	tempView = XMMatrixTranspose(tempView);
-
-	XMStoreFloat4x4(&cameraBuffer.camView, tempView);
+	//tempView = XMMatrixTranspose(tempView);
+	//
+	//XMStoreFloat4x4(&cameraBuffer.camView, tempView);
 
 
 	//store the view matrix
 	//cameraBuffer.camView = this->worldbuffer.worldMatrix;
-	//XMStoreFloat4x4(&cameraBuffer.camView, world);
+	XMStoreFloat4x4(&cameraBuffer.camView, world);
 	//XMStoreFloat4(&cameraBuffer.camPos,pos);
-	this->cameraBuffer.camPos = tempPos;
+	this->cameraBuffer.camPos = camPosition;
 
 	
 	ID3D11Buffer* buffer = BufferHandler::GetInstance()->Buffers()->bCameraBuffer;
@@ -141,7 +141,7 @@ Camera::Camera() : TransformNode()
 
 	worldbuffer.worldMatrix._14 = 0.0f;
 	worldbuffer.worldMatrix._24 = 0.0f;
-	worldbuffer.worldMatrix._34 = -5.0f;
+	worldbuffer.worldMatrix._34 = 5.0f;
 }
 
 

@@ -66,7 +66,7 @@ bool ResourceManager::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDevice
 	this->testModel->CreateVertexBuffer(cubeVerts, 8);
 	this->testModel->CreateIndexBuffer(indices, 36);
 
-	this->sceneTransforms["pCube1aaa"] = testModel;
+	this->sceneTransforms["pCube1aa"] = testModel;
 	this->sceneTransforms["persp"]  = &camera;
 
 
@@ -91,7 +91,6 @@ void ResourceManager::AddNewMesh(string name, Vertex * verts, UINT numVerts, UIN
 		tempModel->SetWorldMatrix(*worldMatrix);
 	
 		tempNewModel = tempModel;
-		
 	
 		sceneTransforms[name] = tempModel;
 		isDirty = true;

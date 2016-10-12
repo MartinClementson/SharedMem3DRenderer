@@ -23,8 +23,9 @@
 class MessageHandler
 {
 private:
-	bool NewMesh(MeshMessage* msg);
-	bool Transform(TransformMessage* msg);
+	bool NewMesh	 (MeshMessage* msg);
+	bool Transform	 (TransformMessage* msg);
+	bool UpdateCamera(CameraMessage * msg);
 public:
 	MessageHandler();
 	~MessageHandler();
