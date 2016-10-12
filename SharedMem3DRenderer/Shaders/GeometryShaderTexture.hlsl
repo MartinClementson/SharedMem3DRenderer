@@ -79,8 +79,8 @@ void GS_main(
             element.wPos    = mul(input[i].Pos, world);
             element.camPos  = camPos;
             element.Texture = input[i].Texture;
-            // element.Normal = normalize(mul(float4(input[i].Normal,1.0f), normalWorld));
-            element.Normal = normalize(mul(float4(faceNormal, 1.0f), normalWorld));
+            element.Normal = normalize(mul(float4(input[i].Normal,1.0f), normalWorld));
+           // element.Normal = normalize(mul(float4(faceNormal, 1.0f), normalWorld));
     
             output.Append(element);
         }
