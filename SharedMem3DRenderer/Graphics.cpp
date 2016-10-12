@@ -25,14 +25,16 @@ bool Graphics::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceContext
 void Graphics::Render()
 {
 	
-	resManager->camera.UpdateIfDirty();
+	resManager->camera->UpdateIfDirty();
 	shaderManager.setActiveShaders(ShaderTypes::TEXTURESHADER);
 	resManager->testModel->Render();
 	resManager->UpdateIfDirty();
-	for (size_t i = 0; i < resManager->Models()->size(); i++)
-	{
-		resManager->Models()->at(i)->Render();
+	resManager->RenderModels();
 
-	}
+	//for (size_t i = 0; i < resManager->Models()->size(); i++)
+	//{
+	//	resManager->Models()->at(i)->Render();
+	//
+	//}
 	
 }
