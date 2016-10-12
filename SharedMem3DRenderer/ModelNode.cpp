@@ -67,7 +67,7 @@ void ModelNode::CreateIndexBuffer(UINT * indices, unsigned int amount)
 
 ModelNode::ModelNode(): TransformNode()
 {
-	
+	thisType = Nodes::NodeType::MESH;
 }
 
 

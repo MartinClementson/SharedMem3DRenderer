@@ -150,11 +150,7 @@ bool MessageHandler::Transform(TransformMessage * msg)
 bool MessageHandler::UpdateCamera(CameraMessage * msg)
 {
 
-	DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
-		-1, 0, 0, 0,
-		0, -1, 0, 0,
-		0, 0, 1, 0,
-		0, 0, 0, 1);
+	
 
 
 
@@ -163,30 +159,67 @@ bool MessageHandler::UpdateCamera(CameraMessage * msg)
 
 	sceneTransforms = &ResourceManager::GetInstance()->sceneTransforms;
 
-	if (sceneTransforms->find(msg->nodeName) != sceneTransforms->end())
-	{
+	//if (sceneTransforms->find(msg->nodeName) != sceneTransforms->end())
+	//{
+		
+		//if (sceneTransforms->at(msg->nodeName)->IsType(Nodes::NodeType::CAMERA))
+		//{
 
-		//the model exists
-
-		DirectX::XMMATRIX world = DirectX::XMMATRIX(msg->viewMatrix);
-		world.r[3].m128_f32[0] *= -1;
-		world.r[3].m128_f32[1] *= -1;
-		world.r[3].m128_f32[2] *= -1;
-		world = XMMatrixMultiply(world, mToggle_XZ);
-		world = XMMatrixTranspose(world);
+			//the camera exists
+			DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
+				-1, 0, 0, 0,
+				0, -1, 0, 0,
+				0, 0, 1, 0,
+				0, 0, 0, 1);
 
 
 
-		DirectX::XMFLOAT4X4 matrixToSend;
+			DirectX::XMMATRIX view = DirectX::XMMATRIX(msg->viewMatrix);
+			view.r[3].m128_f32[0] *= -1;
+			view.r[3].m128_f32[1] *= -1;
+			view.r[3].m128_f32[2] *= -1;
+			view = XMMatrixMultiply(view, mToggle_XZ);
+			view = XMMatrixTranspose(view);
 
-		DirectX::XMStoreFloat4x4(&matrixToSend, world);
+			DirectX::XMFLOAT4X4 viewToSend;
 
-		sceneTransforms->at(msg->nodeName)->SetWorldMatrix(&matrixToSend);
-		//dynamic_cast<ModelNode*>(sceneTransforms->at(msg->nodeName))->SetWorldMatrix(matrixToSend);
-	}
-	else
-		return false;
+			DirectX::XMStoreFloat4x4(&viewToSend, view);
 
+
+
+
+
+			///////////////
+			//Projection
+
+			DirectX::XMMATRIX projMult = DirectX::XMMATRIX(
+				1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, 1, 0,
+				0, 0, 0, 1);
+			DirectX::XMMATRIX proj = DirectX::XMMATRIX(msg->projMatrix);
+			proj.r[2].m128_f32[0] *= -1;
+			proj.r[2].m128_f32[1] *= -1;
+			proj.r[2].m128_f32[2] *= -1;
+			proj.r[2].m128_f32[3] *= -1;
+			proj = XMMatrixTranspose(proj);
+			//proj = XMMatrixMultiply(proj, projMult);
+			
+ 			DirectX::XMFLOAT4X4 projToSend;
+
+			DirectX::XMStoreFloat4x4(&projToSend, proj);
+
+			((Camera*)sceneTransforms->at("persp"))->UpdateViewAndProj(viewToSend, projToSend);
+			//((Camera*)sceneTransforms->at(msg->nodeName))->UpdateViewAndProj(viewToSend, projToSend);
+			//sceneTransforms->at(msg->nodeName)->SetWorldMatrix(&matrixToSend);
+			//dynamic_cast<ModelNode*>(sceneTransforms->at(msg->nodeName))->SetWorldMatrix(matrixToSend);
+		//}
+		//else
+		//	return false;
+//	}
+	//else
+	//	return false;
+	
 	return true;
 }
 

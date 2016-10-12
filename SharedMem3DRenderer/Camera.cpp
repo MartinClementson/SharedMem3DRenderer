@@ -11,8 +11,8 @@ void Camera::UpdateCamBuffer()
 	float aspectRatio = float(WINDOW_WIDTH / WINDOW_HEIGHT);
 	float farZ = 20000.0f;
 	float nearZ = 0.0001f;
-
-
+	
+	
 	//Create projection Matrix
 	DirectX::XMMATRIX tempProj = XMMatrixPerspectiveFovLH(
 		(fovangleY),
@@ -20,43 +20,33 @@ void Camera::UpdateCamBuffer()
 		(nearZ),
 		(farZ)
 		);
-
+	
 	XMMATRIX frustumProj = tempProj;
 	//Transpose the Projcetion matrix
 	tempProj = XMMatrixTranspose(tempProj);
-
+	
 	//Store The projection
-	XMStoreFloat4x4(&cameraBuffer.projection, tempProj);
+	 XMStoreFloat4x4(&cameraBuffer.projection, tempProj);
 
 
 	//_________________________________________________________________________________________
 	//                                     VIEW MATRIX
 
 	//Create the view matrix
-	XMMATRIX world = XMLoadFloat4x4(&worldbuffer.worldMatrix);
-    XMFLOAT4 tempPos = XMFLOAT4(worldbuffer.worldMatrix._14, worldbuffer.worldMatrix._24, worldbuffer.worldMatrix._34, 1.0f);
-	XMVECTOR pos = XMLoadFloat4(&tempPos);
+	//XMMATRIX world = XMLoadFloat4x4(&worldbuffer.worldMatrix);
+    //XMFLOAT4 tempPos = XMFLOAT4(worldbuffer.worldMatrix._14, worldbuffer.worldMatrix._24, worldbuffer.worldMatrix._34, 1.0f);
+	//XMVECTOR pos = XMLoadFloat4(&tempPos);
 
-	DirectX::XMMATRIX tempView = XMMatrixLookAtLH(
-		(XMLoadFloat4(&camPosition)),
-		(XMLoadFloat4(&camTarget)),
-		(XMLoadFloat4(&camUp))
-		);
+//DirectX::XMMATRIX tempView = XMMatrixLookAtLH(
+//	(XMLoadFloat4(&camPosition)),
+//	(XMLoadFloat4(&camTarget)),
+//	(XMLoadFloat4(&camUp))
+//	);
 
 	
 
-	//Transpose view matrix
-
-	//world = XMMatrixTranspose(world);
-	//tempView = XMMatrixTranspose(tempView);
-	//
-	//XMStoreFloat4x4(&cameraBuffer.camView, tempView);
-
-
-	//store the view matrix
-	//cameraBuffer.camView = this->worldbuffer.worldMatrix;
-	XMStoreFloat4x4(&cameraBuffer.camView, world);
-	//XMStoreFloat4(&cameraBuffer.camPos,pos);
+	//XMStoreFloat4x4(&cameraBuffer.camView, world);
+	
 	this->cameraBuffer.camPos = camPosition;
 
 	
@@ -76,22 +66,24 @@ void Camera::UpdateCamBuffer()
 	gDeviceContext->Unmap(buffer, 0);
 
 
-	
-
-
-
 }
 
 bool Camera::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceContext)
 {
 	this->gDevice = gDevice;
 	this->gDeviceContext = gDeviceContext;
-
-	
-
-	
-
 	UpdateCamBuffer();
+	return true;
+}
+
+bool Camera::UpdateViewAndProj(XMFLOAT4X4 & view, XMFLOAT4X4 & proj)
+{
+
+	cameraBuffer.camView    = view;
+	//cameraBuffer.projection = proj;
+
+	isDirty = true;
+	
 	return true;
 }
 
@@ -137,7 +129,7 @@ void Camera::UpdateIfDirty()
 
 Camera::Camera() : TransformNode()
 {
-
+	thisType = Nodes::NodeType::CAMERA;
 
 	worldbuffer.worldMatrix._14 = 0.0f;
 	worldbuffer.worldMatrix._24 = 0.0f;
