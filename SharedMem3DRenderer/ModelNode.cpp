@@ -67,7 +67,7 @@ void ModelNode::CreateIndexBuffer(UINT * indices, unsigned int amount)
 
 ModelNode::ModelNode(): TransformNode()
 {
-	
+	thisType = Nodes::NodeType::MESH;
 }
 
 
@@ -88,7 +88,8 @@ void ModelNode::Render()
 	if (isDirty)
 	{
 		XMVECTOR worldDet = XMMatrixDeterminant(XMLoadFloat4x4(&worldbuffer.worldMatrix));
-		XMStoreFloat4x4(&worldbuffer.normalWorldMatrix, XMMatrixInverse(&worldDet, XMLoadFloat4x4(&worldbuffer.worldMatrix)));
+		XMMATRIX normalWorld = XMMatrixInverse(&worldDet, XMLoadFloat4x4(&worldbuffer.worldMatrix));
+		XMStoreFloat4x4(&worldbuffer.normalWorldMatrix, XMMatrixTranspose(normalWorld));
 
 
 		isDirty = false;
@@ -104,9 +105,6 @@ void ModelNode::Render()
 	*temporaryWorld = this->worldbuffer;
 
 	this->gDeviceContext->Unmap(world, 0);
-	
-
-
 
 	UINT32 vertexSize = sizeof(Vertex);
 	UINT32 offset = 0;

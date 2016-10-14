@@ -63,49 +63,40 @@ bool MessageHandler::NewMesh(MeshMessage * msg)
 	memcpy(indices.get(), (char*)msg + offset, sizeof(UINT)* msg->indexCount);
 
 
-	DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
-		-1, 0, 0, 0,
-		0, -1, 0, 0,
-		0, 0, -1, 0,
-		0, 0, 0, 1);
+	
 
 	DirectX::XMMATRIX world = DirectX::XMMATRIX(msg->worldMatrix);
 
 
+	DirectX::XMFLOAT4X4 matrixToSend = OpenGLMatrixToDirectX(world);
 
-
-	world = XMMatrixMultiply(world, mToggle_XZ);
-	world = XMMatrixTranspose(world);
-
-
-
-	DirectX::XMFLOAT4X4 matrixToSend;
-
-	DirectX::XMStoreFloat4x4(&matrixToSend, world);
 
 	ResourceManager::GetInstance()->AddNewMesh(msg->nodeName, vertices.get(), msg->vertexCount, indices.get(), msg->indexCount, &matrixToSend);
 
 	return true;
 }
 
+XMFLOAT4X4 MessageHandler::OpenGLMatrixToDirectX(XMMATRIX & glMatrix)
+{
+	DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1);
+
+	glMatrix = XMMatrixMultiply(glMatrix, mToggle_XZ);
+	glMatrix = XMMatrixTranspose(glMatrix);
+
+	XMFLOAT4X4 toReturn;
+
+	XMStoreFloat4x4(&toReturn, glMatrix);
+	return toReturn;
+}
+
 bool MessageHandler::Transform(TransformMessage * msg)
 {
-//DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
-//	-1, 0, 0,  0,
-//	0,  1, 0, 0,
-//	0, 0, -1, 0,
-//	0, 0, 0, 1);
 
 
-	
-	DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
-		-1, 0, 0, 0,
-		 0, -1, 0, 0,
-		 0, 0, -1, 0,
-		 0, 0, 0, 1);
-	
-	
-	
 
 	std::map < string, TransformNode*> *sceneTransforms;
 
@@ -115,31 +106,12 @@ bool MessageHandler::Transform(TransformMessage * msg)
 	{
 		
 		//the model exists
-		
+	
 		DirectX::XMMATRIX world = DirectX::XMMATRIX(msg->matrix);
 
-		
-		//world.r[3].m128_f32[0] *= -1;
-		//world.r[3].m128_f32[1] *= -1;
-		//world.r[3].m128_f32[2] *= -1;
-		//float temp = world.r[3].m128_f32[0];
-		//world.r[3].m128_f32[0] *= world.r[3].m128_f32[2];
-		//world.r[3].m128_f32[2] *= temp;
+		DirectX::XMFLOAT4X4 matrixToSend = OpenGLMatrixToDirectX(world);
 
-		
-		//world.r[3].m128_f32[1] *= -1;
-
-		world = XMMatrixMultiply( world, mToggle_XZ);
- 		world = XMMatrixTranspose(world);
-		
-
-
-		DirectX::XMFLOAT4X4 matrixToSend;
-
-		DirectX::XMStoreFloat4x4(&matrixToSend, world);
-
-		sceneTransforms->at(msg->nodeName)->SetWorldMatrix(&matrixToSend);
-		//dynamic_cast<ModelNode*>(sceneTransforms->at(msg->nodeName))->SetWorldMatrix(matrixToSend);
+		sceneTransforms->at(msg->nodeName)->SetWorldMatrix(&matrixToSend);	
 	}
 	else
 		return false;
@@ -150,11 +122,7 @@ bool MessageHandler::Transform(TransformMessage * msg)
 bool MessageHandler::UpdateCamera(CameraMessage * msg)
 {
 
-	DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
-		-1, 0, 0, 0,
-		0, -1, 0, 0,
-		0, 0, 1, 0,
-		0, 0, 0, 1);
+	
 
 
 
@@ -163,32 +131,72 @@ bool MessageHandler::UpdateCamera(CameraMessage * msg)
 
 	sceneTransforms = &ResourceManager::GetInstance()->sceneTransforms;
 
-	if (sceneTransforms->find(msg->nodeName) != sceneTransforms->end())
-	{
+	//if (sceneTransforms->find(msg->nodeName) != sceneTransforms->end())
+	//{
+		
+		//if (sceneTransforms->at(msg->nodeName)->IsType(Nodes::NodeType::CAMERA))
+		//{
 
-		//the model exists
-
-		DirectX::XMMATRIX world = DirectX::XMMATRIX(msg->viewMatrix);
-		world.r[3].m128_f32[0] *= -1;
-		world.r[3].m128_f32[1] *= -1;
-		world.r[3].m128_f32[2] *= -1;
-		world = XMMatrixMultiply(world, mToggle_XZ);
-		world = XMMatrixTranspose(world);
+			//the camera exists
+			DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
+				1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, -1, 0,
+				0, 0, 0, 1);
 
 
 
-		DirectX::XMFLOAT4X4 matrixToSend;
+			DirectX::XMMATRIX view = DirectX::XMMATRIX(msg->viewMatrix);
+			view.r[0].m128_f32[2] *= -1;
+			view.r[1].m128_f32[2] *= -1;
+			view.r[2].m128_f32[2] *= -1;
+			view.r[3].m128_f32[2] *= -1;
+			//view = XMMatrixMultiply(view, mToggle_XZ);
+			view = XMMatrixTranspose(view);
 
-		DirectX::XMStoreFloat4x4(&matrixToSend, world);
+			DirectX::XMFLOAT4X4 viewToSend;
 
-		sceneTransforms->at(msg->nodeName)->SetWorldMatrix(&matrixToSend);
-		//dynamic_cast<ModelNode*>(sceneTransforms->at(msg->nodeName))->SetWorldMatrix(matrixToSend);
-	}
-	else
-		return false;
+			DirectX::XMStoreFloat4x4(&viewToSend, view);
 
+
+
+
+
+			///////////////
+			//Projection
+
+			DirectX::XMMATRIX projMult = DirectX::XMMATRIX(
+				1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, 1, 0,
+				0, 0, 0, 1);
+			DirectX::XMMATRIX proj = DirectX::XMMATRIX(msg->projMatrix);
+			proj.r[2].m128_f32[0] *= -1;
+			proj.r[2].m128_f32[1] *= -1;
+			proj.r[2].m128_f32[2] *= -1;
+			proj.r[2].m128_f32[3] *= -1;
+			proj = XMMatrixTranspose(proj);
+			//proj = XMMatrixMultiply(proj, projMult);
+			
+ 			DirectX::XMFLOAT4X4 projToSend;
+
+			DirectX::XMStoreFloat4x4(&projToSend, proj);
+
+			((Camera*)sceneTransforms->at("persp"))->UpdateViewAndProj(viewToSend, projToSend);
+			//((Camera*)sceneTransforms->at(msg->nodeName))->UpdateViewAndProj(viewToSend, projToSend);
+			//sceneTransforms->at(msg->nodeName)->SetWorldMatrix(&matrixToSend);
+			//dynamic_cast<ModelNode*>(sceneTransforms->at(msg->nodeName))->SetWorldMatrix(matrixToSend);
+		//}
+		//else
+		//	return false;
+//	}
+	//else
+	//	return false;
+	
 	return true;
 }
+
+
 
 MessageHandler::MessageHandler()
 {
@@ -206,32 +214,40 @@ bool MessageHandler::TranslateMessage(char * msg, size_t length)
 
 	switch (mainHead->messageType)
 	{
-	case MESH:
-	{
-
-		MeshMessage * meshHeader = (MeshMessage*)(msg + sizeof(MainMessageHeader));
-		NewMesh(meshHeader);
-		break;
-	}
-	case VERTSEGMENT:
-		break;
-	case VERTEX:
-		break;
-	case CAMERA:
-	{
-
-		CameraMessage * cameraMessage = (CameraMessage*)(msg + sizeof(MainMessageHeader));
-		UpdateCamera(cameraMessage);
-		break;
-	}
-	case TRANSFORM:
-	{
-		TransformMessage * transFormHeader = (TransformMessage*)(msg + sizeof(MainMessageHeader));
-		Transform(transFormHeader);
-	}
-		break;
-	case MATERIAL:
-		break;
+		case MESH:
+		{
+	
+			MeshMessage * meshHeader = (MeshMessage*)(msg + sizeof(MainMessageHeader));
+			NewMesh(meshHeader);
+			break;
+		}
+		case VERTSEGMENT:
+			break;
+		case VERTEX:
+			break;
+		case CAMERA:
+		{
+			CameraMessage * cameraMessage = (CameraMessage*)(msg + sizeof(MainMessageHeader));
+			UpdateCamera(cameraMessage);
+			break;
+		}
+		case TRANSFORM:
+		{
+			TransformMessage * transFormHeader = (TransformMessage*)(msg + sizeof(MainMessageHeader));
+			Transform(transFormHeader);
+			break;
+		}
+		case MATERIAL:
+		{
+			break;
+		}
+	
+		case DELETION:
+		{
+			DeleteMessage* deleteHeader = (DeleteMessage*)(msg + sizeof(MainMessageHeader));
+			string name(deleteHeader->nodeName);
+			ResourceManager::GetInstance()->DeleteNode(name);
+		}
 	}
 
 

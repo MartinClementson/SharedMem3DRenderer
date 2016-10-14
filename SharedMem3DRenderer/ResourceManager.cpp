@@ -4,11 +4,20 @@
 
 bool ResourceManager::UpdateIfDirty()
 {
+
+	//if (deletionQueue.size() > 0)
+	//{
+	//	int size = deletionQueue.size();
+	//	for (size_t i = 0; i < size; i++)
+	//	{
+	//		
+	//	}
+	//}
 	if (isDirty)
 	{
 
-		models.push_back(tempNewModel);
-		tempNewModel = nullptr;
+		//models.push_back(tempNewModel);
+		//tempNewModel = nullptr;
 		isDirty = false;
 		return true;
 	}
@@ -20,10 +29,11 @@ bool ResourceManager::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDevice
 	this->gDevice        = gDevice;
 	this->gDeviceContext = gDeviceContext;
 	this->testModel		 = new ModelNode();
-
+	this->gMutex		 =  std::unique_ptr<SharedMemory::SharedMutex>( new SharedMemory::SharedMutex(mutexName));
+	this->camera         = new Camera();
+	
 	testModel->Init(gDevice, gDeviceContext);
-
-	if (!camera.Init(gDevice, gDeviceContext))
+	if (!camera->Init(gDevice, gDeviceContext))
 		return false;
 
 
@@ -66,8 +76,8 @@ bool ResourceManager::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDevice
 	this->testModel->CreateVertexBuffer(cubeVerts, 8);
 	this->testModel->CreateIndexBuffer(indices, 36);
 
-	this->sceneTransforms["pCube1aa"] = testModel;
-	this->sceneTransforms["persp"]  = &camera;
+	this->sceneTransforms["pCube1"] = testModel;
+	this->sceneTransforms["persp"]  = camera;
 
 
 
@@ -90,26 +100,64 @@ void ResourceManager::AddNewMesh(string name, Vertex * verts, UINT numVerts, UIN
 		tempModel->CreateIndexBuffer(indices, numIndices);
 		tempModel->SetWorldMatrix(*worldMatrix);
 	
-		tempNewModel = tempModel;
-	
+	//	tempNewModel = tempModel;
+		gMutex->Lock();
 		sceneTransforms[name] = tempModel;
+		gMutex->Unlock();
 		isDirty = true;
 	}
 }
 
 ResourceManager::ResourceManager()
 {
-	models.reserve(50);
+	
 }
 
 
+bool ResourceManager::RenderModels()
+{
+	gMutex->Lock();
+	for (auto iterator = sceneTransforms.begin(); iterator != sceneTransforms.end(); ++iterator)
+	{
+		TransformNode * node = iterator->second;
+		if (node->IsType(Nodes::NodeType::MESH))
+			((ModelNode*)node)->Render();
+	}
+	gMutex->Unlock();
+	return true;
+}
+
+bool ResourceManager::DeleteNode(string name)
+{
+	while(!gMutex->Lock());
+	if (sceneTransforms.find(name) != sceneTransforms.end())
+	{
+		TransformNode * node = sceneTransforms.at(name);
+		delete node;
+		sceneTransforms.erase(name);
+		gMutex->Unlock();
+		return true;
+	}
+	gMutex->Unlock();
+	return false;
+}
+
+bool ResourceManager::DeleteNode(char * name)
+{
+	return false;
+}
+
 ResourceManager::~ResourceManager()
 {
-	sceneTransforms.clear();
-	delete testModel;
-	for (size_t i = 0; i < models.size(); i++)
+	//delete testModel;
+	
+	for (auto iterator = sceneTransforms.begin(); iterator != sceneTransforms.end(); ++iterator) 
 	{
-		delete models.at(i);
+		TransformNode * node = iterator->second;
+			delete node;
 	}
+	sceneTransforms.clear();
+
+
 	
 }

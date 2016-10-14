@@ -72,9 +72,13 @@ bool Engine::CreateDirect3DContext(HWND * handle)
 	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
 	dssDesc.DepthEnable		 = true;
 	dssDesc.DepthWriteMask   = D3D11_DEPTH_WRITE_MASK_ALL; //Default
-	dssDesc.DepthFunc        = D3D11_COMPARISON_LESS;      //Default
+	dssDesc.DepthFunc        = D3D11_COMPARISON_LESS_EQUAL;
 
 	gDevice->CreateDepthStencilState(&dssDesc, &depthState);
+
+	gDeviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+	gDeviceContext->OMSetDepthStencilState(depthState, 1);
 
 
 
@@ -122,6 +126,9 @@ bool Engine::CreateDirect3DContext(HWND * handle)
 		pBackBuffer->Release();
 
 		this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView);
+
+
+
 
 	}
 
@@ -178,7 +185,7 @@ void Engine::Run()
 	float clearColor[] = { 0, 0, 0, 1 };
 
 	gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, this->depthStencilView);
-	this->gDeviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
+	this->gDeviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	this->gDeviceContext->ClearRenderTargetView(gBackbufferRTV, clearColor);
 	graphics.Render();
 	this->gSwapChain->Present(VSYNC, 0); //Change front and back buffer after rendering

@@ -74,7 +74,7 @@ float3 normalToWorldSpace(float3 normalMapSample, float3 normal, float3 tangent)
 
 float4 PS_main(PS_IN input) : SV_TARGET
 {
-    float4 lightPosition = float4(0.0f, 0.0f, 0.0f,1.0f);
+    float4 lightPosition = float4(0.0f, 10.0f, 0.0f,1.0f);
     float3 normal = input.Normal;
   //  if(normalMap == true)
   //  {
