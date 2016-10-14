@@ -43,8 +43,9 @@ void GS_main(
     float3 faceEdgeA = input[1].Pos - input[0].Pos;
     float3 faceEdgeB = input[2].Pos - input[0].Pos;
     float3 faceNormal = normalize(cross(faceEdgeA, faceEdgeB));
-
-
+	faceNormal.x = faceNormal.x * -1;
+	faceNormal.y = faceNormal.y * -1;
+	faceNormal.z = faceNormal.z * -1;
 	//////////////////////////////////////////////////
 	///////////Back-face culling test/////////////////
 
@@ -80,7 +81,7 @@ void GS_main(
             element.camPos  = camPos;
             element.Texture = input[i].Texture;
             // element.Normal = normalize(mul(float4(input[i].Normal,1.0f), normalWorld));
-            element.Normal = normalize(mul(float4(faceNormal, 1.0f), normalWorld));
+			element.Normal = faceNormal2;//normalize(mul(float4(faceNormal, 1.0f), normalWorld));
     
             output.Append(element);
         }

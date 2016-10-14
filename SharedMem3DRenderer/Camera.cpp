@@ -37,15 +37,15 @@ void Camera::UpdateCamBuffer()
     //XMFLOAT4 tempPos = XMFLOAT4(worldbuffer.worldMatrix._14, worldbuffer.worldMatrix._24, worldbuffer.worldMatrix._34, 1.0f);
 	//XMVECTOR pos = XMLoadFloat4(&tempPos);
 
-//DirectX::XMMATRIX tempView = XMMatrixLookAtLH(
-//	(XMLoadFloat4(&camPosition)),
-//	(XMLoadFloat4(&camTarget)),
-//	(XMLoadFloat4(&camUp))
-//	);
+	DirectX::XMMATRIX tempView = XMMatrixLookAtLH(
+		(XMLoadFloat4(&camPosition)),
+		(XMLoadFloat4(&camTarget)),
+		(XMLoadFloat4(&camUp))
+		);
 
 	
-
-	//XMStoreFloat4x4(&cameraBuffer.camView, world);
+	tempView = XMMatrixTranspose(tempView);
+	//XMStoreFloat4x4(&cameraBuffer.camView, tempView);
 	
 	this->cameraBuffer.camPos = camPosition;
 

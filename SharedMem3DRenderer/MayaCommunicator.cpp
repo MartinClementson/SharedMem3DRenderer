@@ -63,49 +63,40 @@ bool MessageHandler::NewMesh(MeshMessage * msg)
 	memcpy(indices.get(), (char*)msg + offset, sizeof(UINT)* msg->indexCount);
 
 
-	DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
-		-1, 0, 0, 0,
-		0, -1, 0, 0,
-		0, 0, -1, 0,
-		0, 0, 0, 1);
+	
 
 	DirectX::XMMATRIX world = DirectX::XMMATRIX(msg->worldMatrix);
 
 
+	DirectX::XMFLOAT4X4 matrixToSend = OpenGLMatrixToDirectX(world);
 
-
-	world = XMMatrixMultiply(world, mToggle_XZ);
-	world = XMMatrixTranspose(world);
-
-
-
-	DirectX::XMFLOAT4X4 matrixToSend;
-
-	DirectX::XMStoreFloat4x4(&matrixToSend, world);
 
 	ResourceManager::GetInstance()->AddNewMesh(msg->nodeName, vertices.get(), msg->vertexCount, indices.get(), msg->indexCount, &matrixToSend);
 
 	return true;
 }
 
+XMFLOAT4X4 MessageHandler::OpenGLMatrixToDirectX(XMMATRIX & glMatrix)
+{
+	DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1);
+
+	glMatrix = XMMatrixMultiply(glMatrix, mToggle_XZ);
+	glMatrix = XMMatrixTranspose(glMatrix);
+
+	XMFLOAT4X4 toReturn;
+
+	XMStoreFloat4x4(&toReturn, glMatrix);
+	return toReturn;
+}
+
 bool MessageHandler::Transform(TransformMessage * msg)
 {
-//DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
-//	-1, 0, 0,  0,
-//	0,  1, 0, 0,
-//	0, 0, -1, 0,
-//	0, 0, 0, 1);
 
 
-	
-	DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
-		-1, 0, 0, 0,
-		 0, -1, 0, 0,
-		 0, 0, -1, 0,
-		 0, 0, 0, 1);
-	
-	
-	
 
 	std::map < string, TransformNode*> *sceneTransforms;
 
@@ -115,31 +106,12 @@ bool MessageHandler::Transform(TransformMessage * msg)
 	{
 		
 		//the model exists
-		
+	
 		DirectX::XMMATRIX world = DirectX::XMMATRIX(msg->matrix);
 
-		
-		//world.r[3].m128_f32[0] *= -1;
-		//world.r[3].m128_f32[1] *= -1;
-		//world.r[3].m128_f32[2] *= -1;
-		//float temp = world.r[3].m128_f32[0];
-		//world.r[3].m128_f32[0] *= world.r[3].m128_f32[2];
-		//world.r[3].m128_f32[2] *= temp;
+		DirectX::XMFLOAT4X4 matrixToSend = OpenGLMatrixToDirectX(world);
 
-		
-		//world.r[3].m128_f32[1] *= -1;
-
-		world = XMMatrixMultiply( world, mToggle_XZ);
- 		world = XMMatrixTranspose(world);
-		
-
-
-		DirectX::XMFLOAT4X4 matrixToSend;
-
-		DirectX::XMStoreFloat4x4(&matrixToSend, world);
-
-		sceneTransforms->at(msg->nodeName)->SetWorldMatrix(&matrixToSend);
-		//dynamic_cast<ModelNode*>(sceneTransforms->at(msg->nodeName))->SetWorldMatrix(matrixToSend);
+		sceneTransforms->at(msg->nodeName)->SetWorldMatrix(&matrixToSend);	
 	}
 	else
 		return false;
@@ -167,18 +139,19 @@ bool MessageHandler::UpdateCamera(CameraMessage * msg)
 
 			//the camera exists
 			DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
-				-1, 0, 0, 0,
-				0, -1, 0, 0,
-				0, 0, 1, 0,
+				1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, -1, 0,
 				0, 0, 0, 1);
 
 
 
 			DirectX::XMMATRIX view = DirectX::XMMATRIX(msg->viewMatrix);
-			view.r[3].m128_f32[0] *= -1;
-			view.r[3].m128_f32[1] *= -1;
+			view.r[0].m128_f32[2] *= -1;
+			view.r[1].m128_f32[2] *= -1;
+			view.r[2].m128_f32[2] *= -1;
 			view.r[3].m128_f32[2] *= -1;
-			view = XMMatrixMultiply(view, mToggle_XZ);
+			//view = XMMatrixMultiply(view, mToggle_XZ);
 			view = XMMatrixTranspose(view);
 
 			DirectX::XMFLOAT4X4 viewToSend;
@@ -222,6 +195,8 @@ bool MessageHandler::UpdateCamera(CameraMessage * msg)
 	
 	return true;
 }
+
+
 
 MessageHandler::MessageHandler()
 {

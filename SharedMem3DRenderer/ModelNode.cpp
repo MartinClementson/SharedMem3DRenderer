@@ -88,7 +88,8 @@ void ModelNode::Render()
 	if (isDirty)
 	{
 		XMVECTOR worldDet = XMMatrixDeterminant(XMLoadFloat4x4(&worldbuffer.worldMatrix));
-		XMStoreFloat4x4(&worldbuffer.normalWorldMatrix, XMMatrixInverse(&worldDet, XMLoadFloat4x4(&worldbuffer.worldMatrix)));
+		XMMATRIX normalWorld = XMMatrixInverse(&worldDet, XMLoadFloat4x4(&worldbuffer.worldMatrix));
+		XMStoreFloat4x4(&worldbuffer.normalWorldMatrix, XMMatrixTranspose(normalWorld));
 
 
 		isDirty = false;
