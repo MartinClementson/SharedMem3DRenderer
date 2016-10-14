@@ -22,7 +22,8 @@ enum MessageType {
 	VERTEX,
 	CAMERA,
 	TRANSFORM,
-	MATERIAL
+	MATERIAL,
+	DELETION
 
 
 };
@@ -38,11 +39,9 @@ struct MeshMessage
 {
 	char nodeName[256];
 	unsigned int nameLength;
-
 	float worldMatrix[16];
 	unsigned int vertexCount;
 	unsigned int indexCount;
-	
 };
 
 struct VertSegmentMessage //for n verts, but not a whole mesh,
@@ -50,14 +49,12 @@ struct VertSegmentMessage //for n verts, but not a whole mesh,
 	char nodeName[256];
 	unsigned int nameLength;
 	unsigned int numVertices;
-
 };
 
 struct VertexMessage // for single verts.
 {
 	unsigned int indexId; // the id in the array. so we know which one to update
 	Vertex vert;
-
 };
 
 struct TransformMessage
@@ -65,7 +62,6 @@ struct TransformMessage
 	char nodeName[256];
 	unsigned int nameLength;
 	float matrix[16];
-
 };
 
 struct CameraMessage
@@ -74,6 +70,11 @@ struct CameraMessage
 	unsigned int nameLength;
 	float viewMatrix[16];
 	float projMatrix[16];
+};
 
+struct DeleteMessage
+{
+	char nodeName[256];
+	unsigned int nameLength;
 };
 
