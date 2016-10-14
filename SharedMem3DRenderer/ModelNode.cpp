@@ -104,9 +104,6 @@ void ModelNode::Render()
 	*temporaryWorld = this->worldbuffer;
 
 	this->gDeviceContext->Unmap(world, 0);
-	
-
-
 
 	UINT32 vertexSize = sizeof(Vertex);
 	UINT32 offset = 0;

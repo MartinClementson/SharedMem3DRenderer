@@ -239,32 +239,40 @@ bool MessageHandler::TranslateMessage(char * msg, size_t length)
 
 	switch (mainHead->messageType)
 	{
-	case MESH:
-	{
-
-		MeshMessage * meshHeader = (MeshMessage*)(msg + sizeof(MainMessageHeader));
-		NewMesh(meshHeader);
-		break;
-	}
-	case VERTSEGMENT:
-		break;
-	case VERTEX:
-		break;
-	case CAMERA:
-	{
-
-		CameraMessage * cameraMessage = (CameraMessage*)(msg + sizeof(MainMessageHeader));
-		UpdateCamera(cameraMessage);
-		break;
-	}
-	case TRANSFORM:
-	{
-		TransformMessage * transFormHeader = (TransformMessage*)(msg + sizeof(MainMessageHeader));
-		Transform(transFormHeader);
-	}
-		break;
-	case MATERIAL:
-		break;
+		case MESH:
+		{
+	
+			MeshMessage * meshHeader = (MeshMessage*)(msg + sizeof(MainMessageHeader));
+			NewMesh(meshHeader);
+			break;
+		}
+		case VERTSEGMENT:
+			break;
+		case VERTEX:
+			break;
+		case CAMERA:
+		{
+			CameraMessage * cameraMessage = (CameraMessage*)(msg + sizeof(MainMessageHeader));
+			UpdateCamera(cameraMessage);
+			break;
+		}
+		case TRANSFORM:
+		{
+			TransformMessage * transFormHeader = (TransformMessage*)(msg + sizeof(MainMessageHeader));
+			Transform(transFormHeader);
+			break;
+		}
+		case MATERIAL:
+		{
+			break;
+		}
+	
+		case DELETION:
+		{
+			DeleteMessage* deleteHeader = (DeleteMessage*)(msg + sizeof(MainMessageHeader));
+			string name(deleteHeader->nodeName);
+			ResourceManager::GetInstance()->DeleteNode(name);
+		}
 	}
 
 
