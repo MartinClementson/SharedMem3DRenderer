@@ -74,7 +74,10 @@ float3 normalToWorldSpace(float3 normalMapSample, float3 normal, float3 tangent)
 
 float4 PS_main(PS_IN input) : SV_TARGET
 {
-    float4 lightPosition = float4(0.0f, 10.0f, 0.0f,1.0f);
+	//return float4(0.5f,0.5f,0.0f, 1);
+	//return float4((input.Normal + float3(0.2f,0.2f,0.2f)), 1);
+	//return float4(input.Pos);
+    float4 lightPosition = float4(5.0f, 10.0f, 0.0f,1.0f);
     float3 normal = input.Normal;
   //  if(normalMap == true)
   //  {
@@ -99,7 +102,7 @@ float3 v = normalize(input.camPos - input.wPos).xyz;
 ////Calculate how much of the pixel is to be lit "intensity"
 float fDot =  saturate(dot(vRay, normalize(normal)));
 
-    float3 color = float3(0.5f, 0.5f, 0.0f);
+    float3 color = float3(0.5f, 0.5f, 0.5f);
     
     //lightColor.xyz;
 //   
@@ -127,7 +130,7 @@ float fDot =  saturate(dot(vRay, normalize(normal)));
 //
 // 3d game programming book. p.330
 ///////
-    float3 ambient = { 0.5f, 0.5f, 0.5f };
+    float3 ambient = { 0.2f, 0.2f, 0.2f };
 
     float3 diffuse = color * fDot + ambient;
 //

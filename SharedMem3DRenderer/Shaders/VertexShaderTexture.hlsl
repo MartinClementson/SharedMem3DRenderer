@@ -3,6 +3,8 @@ struct VS_IN
 {
 	float3 Pos      : POSITION;
 	float3 Normal   : NORMALS;
+	float3 BiNormal : BINORMALS;
+	float3 Tangents : TANGENTS;
 	float2 Texture  : TEXCOORD0;
 };
 
