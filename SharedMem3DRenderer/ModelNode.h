@@ -2,6 +2,7 @@
 #include "TransformNode.h"
 #include "Structures.h"
 #include "BufferHandler.h"
+#include <memory>
 #define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
 using namespace DirectX;
 class ModelNode : public TransformNode
@@ -15,7 +16,9 @@ private:
 
 	ID3D11Buffer* vertexBuffer	= nullptr;
 	ID3D11Buffer* indexBuffer	= nullptr;
-	
+	std::shared_ptr<Vertex> vertexData;
+	std::shared_ptr<UINT> indexData;
+	bool newModelData = false;
 	
 public:
 	ModelNode();
@@ -23,9 +26,9 @@ public:
 	void Render();
 	void SetWorldMatrix(XMFLOAT4X4 &matrix);
 	void SetWorldMatrix(XMMATRIX&matrix);
-
+	void UpdateModelData(Vertex newVertData, UINT newIndData);
 	void CreateVertexBuffer(Vertex* vertices, unsigned int amount);
-
+	void Dirtify();
 	void CreateIndexBuffer(UINT * indices, unsigned int amount);
 	~ModelNode();
 	

@@ -7,8 +7,8 @@ void ModelNode::CreateVertexBuffer(Vertex * vertices, unsigned int amount)
 	if (this->vertexBuffer != nullptr)
 		SAFE_RELEASE(vertexBuffer);
 
-
-
+	this->vertexData = std::shared_ptr<Vertex>(new Vertex[amount]);
+	memcpy(vertexData.get(), vertices, sizeof(Vertex) * amount);
 
 	D3D11_BUFFER_DESC bufferDesc;
 	memset(&bufferDesc, 0, sizeof(bufferDesc));
@@ -33,6 +33,12 @@ void ModelNode::CreateVertexBuffer(Vertex * vertices, unsigned int amount)
 
 }
 
+void ModelNode::Dirtify()
+{
+	this->isDirty = true;
+	this->newModelData = true;
+}
+
 
 void ModelNode::CreateIndexBuffer(UINT * indices, unsigned int amount)
 {
@@ -40,7 +46,8 @@ void ModelNode::CreateIndexBuffer(UINT * indices, unsigned int amount)
 	if (this->indexBuffer != nullptr)
 		SAFE_RELEASE(indexBuffer);
 
-
+	this->indexData = std::shared_ptr<UINT>(new UINT[amount]);
+	memcpy(indexData.get(), indices, sizeof(UINT) * amount);
 
 	D3D11_BUFFER_DESC ibd;
 
@@ -91,6 +98,12 @@ void ModelNode::Render()
 		XMMATRIX normalWorld = XMMatrixInverse(&worldDet, XMLoadFloat4x4(&worldbuffer.worldMatrix));
 		XMStoreFloat4x4(&worldbuffer.normalWorldMatrix, XMMatrixTranspose(normalWorld));
 
+		if (newModelData)
+		{
+			this->CreateVertexBuffer(this->vertexData.get(), vertCount);
+			this->CreateIndexBuffer(this->indexData.get(), indexCount);
+			newModelData = false;
+		}
 
 		isDirty = false;
 	}
@@ -129,6 +142,12 @@ void ModelNode::SetWorldMatrix(XMMATRIX & matrix)
 	XMStoreFloat4x4(&worldbuffer.worldMatrix, matrix);
 	isDirty = true;
 
+}
+
+void ModelNode::UpdateModelData(Vertex newVertData, UINT newIndData)
+{
+	this->vertexData.get()[newIndData] = newVertData;
+	this->indexData.get()[newIndData] = newIndData;
 }
 
 
