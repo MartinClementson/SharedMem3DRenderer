@@ -49,14 +49,14 @@ bool ResourceManager::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDevice
 	cubeVerts[7].position = Float3(-0.5, 2.5, -0.5);		//7
 
 
-	cubeVerts[0].normal = Float3(-0.5, 2.5, 0.5);		//0
-	cubeVerts[1].normal = Float3(-0.5, 0.0, 0.5);		//1
-	cubeVerts[2].normal = Float3(0.5, 0.0, 0.5);		//2
-	cubeVerts[3].normal = Float3(0.5, 2.5, 0.5);		//3
-	cubeVerts[4].normal = Float3(0.5, 0.0, -0.5);		//4
-	cubeVerts[5].normal = Float3(0.5, 2.5, -0.5);		//5
-	cubeVerts[6].normal = Float3(-0.5, 0.0, -0.5);		//6
-	cubeVerts[7].normal = Float3(-0.5, 2.5, -0.5);		//7
+	cubeVerts[0].normal = Float3(0, 0, 1);		//0
+	cubeVerts[1].normal = Float3(0, 0, 1);		//1
+	cubeVerts[2].normal = Float3(0, 0, 1);		//2
+	cubeVerts[3].normal = Float3(0, 0, 1);		//3
+	cubeVerts[4].normal = Float3(0, 1, 0);		//4
+	cubeVerts[5].normal = Float3(0, 1, 0);		//5
+	cubeVerts[6].normal = Float3(0, 1, 0);		//6
+	cubeVerts[7].normal = Float3(0, 1, 0);		//7
 
 	UINT indices[36] =
 	{
@@ -76,7 +76,7 @@ bool ResourceManager::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDevice
 	this->testModel->CreateVertexBuffer(cubeVerts, 8);
 	this->testModel->CreateIndexBuffer(indices, 36);
 
-	this->sceneTransforms["pCube1"] = testModel;
+	//this->sceneTransforms["pCube1"] = testModel;
 	this->sceneTransforms["persp"]  = camera;
 
 

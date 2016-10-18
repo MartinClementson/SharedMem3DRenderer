@@ -1,8 +1,8 @@
 #pragma once
 
 #include "resource.h"
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 600
+#define WINDOW_WIDTH 1152
+#define WINDOW_HEIGHT 864
 #define WINDOWED true
 #define WIREFRAME false
 #define VSYNC 1 //1 == ON, 0 = OFF

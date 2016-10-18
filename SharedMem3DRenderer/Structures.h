@@ -72,26 +72,34 @@ struct Vertex
 
 	Float3 position;
 	Float3 normal;
+	Float3 binormal;
+	Float3 tangent;
 	Float2 uv;
 
 
-	Vertex(Float3 position, Float3 normal, Float2 uv)
+	Vertex(Float3 position, Float3 normal, Float3 binormal, Float3 tangent, Float2 uv)
 	{
 		this->position.x = position.x;
 		this->position.y = position.y;
 		this->position.z = position.z;
 
-		this->normal.x	 = normal.x;
-		this->normal.y	 = normal.y;
-		this->normal.z	 = normal.z;
+		this->normal.x = normal.x;
+		this->normal.y = normal.y;
+		this->normal.z = normal.z;
 
-		this->uv.x		 = uv.x;
-		this->uv.y		 = uv.y;
+		this->binormal.x = binormal.x;
+		this->binormal.y = binormal.y;
+		this->binormal.z = binormal.z;
+
+		this->tangent.x = tangent.x;
+		this->tangent.y = tangent.y;
+		this->tangent.z = tangent.z;
+
+		this->uv.x = uv.x;
+		this->uv.y = uv.y;
 
 	}
 	Vertex() {};
-
-
 };
 
 
