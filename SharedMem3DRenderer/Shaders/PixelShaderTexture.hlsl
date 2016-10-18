@@ -14,17 +14,15 @@
 //
 //};
 //
-//cbuffer materialAttributes : register(b2)
-//{
-//    float3 KA; //Ambient  color
-//    float pad1;
-//    float3 KD; //Diffuse  color
-//    float pad2;
-//    float3 KS; //Specular color
-//    float pad3;
-//    float  NS; //Specular Power
-//
-//};
+cbuffer materialAttributes : register(b2)
+{
+    float4 diffuse; 
+    float4 ambient;
+    float4 specularRGB;
+    float  specularValue; 
+	float3 pad;
+
+};
 //
 SamplerState SampleType;
 
@@ -102,7 +100,7 @@ float3 v = normalize(input.camPos - input.wPos).xyz;
 ////Calculate how much of the pixel is to be lit "intensity"
 float fDot =  saturate(dot(vRay, normalize(normal)));
 
-    float3 color = float3(0.5f, 0.5f, 0.5f);
+    float3 color = diffuse.xyz;
     
     //lightColor.xyz;
 //   
@@ -130,7 +128,7 @@ float fDot =  saturate(dot(vRay, normalize(normal)));
 //
 // 3d game programming book. p.330
 ///////
-    float3 ambient = { 0.2f, 0.2f, 0.2f };
+    float3 ambient = ambient.xyz;
 
     float3 diffuse = color * fDot + ambient;
 //

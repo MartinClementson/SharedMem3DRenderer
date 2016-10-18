@@ -114,6 +114,18 @@ ResourceManager::ResourceManager()
 }
 
 
+void ResourceManager::AddNewMaterial(MaterialMessage * mat, TextureFile * textures)
+{
+	MaterialNode* newMaterial = new MaterialNode(); // memory freed in destructor
+	newMaterial->Init(gDevice, gDeviceContext);
+
+	newMaterial->CreateFromMessage(mat, textures);
+
+	this->sceneMaterials[string(mat->matName)] = newMaterial;
+
+
+}
+
 bool ResourceManager::RenderModels()
 {
 	gMutex->Lock();
@@ -149,7 +161,6 @@ bool ResourceManager::DeleteNode(char * name)
 
 ResourceManager::~ResourceManager()
 {
-	//delete testModel;
 	
 	for (auto iterator = sceneTransforms.begin(); iterator != sceneTransforms.end(); ++iterator) 
 	{
@@ -159,5 +170,12 @@ ResourceManager::~ResourceManager()
 	sceneTransforms.clear();
 
 
+
+	for (auto iterator = sceneMaterials.begin(); iterator != sceneMaterials.end(); ++iterator)
+	{
+		MaterialNode * node = iterator->second;
+		delete node;
+	}
+	sceneMaterials.clear();
 	
 }

@@ -96,8 +96,6 @@ XMFLOAT4X4 MessageHandler::OpenGLMatrixToDirectX(XMMATRIX & glMatrix)
 bool MessageHandler::Transform(TransformMessage * msg)
 {
 
-
-
 	std::map < string, TransformNode*> *sceneTransforms;
 
 	sceneTransforms = &ResourceManager::GetInstance()->sceneTransforms;
@@ -239,6 +237,29 @@ bool MessageHandler::TranslateMessage(char * msg, size_t length)
 		}
 		case MATERIAL:
 		{
+			std::map < string, MaterialNode*> *sceneMaterials;
+
+			sceneMaterials = &ResourceManager::GetInstance()->sceneMaterials;
+			MaterialMessage * matMessage = (MaterialMessage*)(msg + sizeof(MainMessageHeader));
+
+			TextureFile* textures = (TextureFile*)(msg + sizeof(MainMessageHeader) + sizeof(MaterialMessage));
+
+			
+			if (sceneMaterials->find(matMessage->matName) != sceneMaterials->end())
+			{
+				//the material exists
+				if (sceneMaterials->at(matMessage->matName)->IsType(Nodes::NodeType::MATERIAL))
+				{
+
+				}
+
+			}
+			else
+			{
+				ResourceManager::GetInstance()->AddNewMaterial(matMessage, textures);
+			}
+
+
 			break;
 		}
 	

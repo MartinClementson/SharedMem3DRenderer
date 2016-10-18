@@ -51,7 +51,7 @@ bool BufferHandler::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceCo
 
 	//Creating the Material constant buffer
 	CD3D11_BUFFER_DESC bufferDescMat;
-	ZeroMemory(&bufferDesc, sizeof(bufferDesc));
+	ZeroMemory(&bufferDescMat, sizeof(bufferDescMat));
 	bufferDescMat.ByteWidth		   = sizeof(MaterialBuffer);
 	bufferDescMat.BindFlags		   = D3D11_BIND_CONSTANT_BUFFER;
 	bufferDescMat.Usage			   = D3D11_USAGE_DYNAMIC;

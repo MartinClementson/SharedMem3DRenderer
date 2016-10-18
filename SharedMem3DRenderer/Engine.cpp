@@ -142,6 +142,7 @@ Engine::Engine()
 bool Engine::Init(HWND& windowHandle)
 {
 
+
 	if (!this->CreateDirect3DContext(&windowHandle))
 	{
 		MessageBox(windowHandle, TEXT("Could not create direct3dContext"), TEXT("Error"), MB_OK);
@@ -163,6 +164,10 @@ bool Engine::Init(HWND& windowHandle)
 	if (!this->graphics.Init(this->gDevice, this->gDeviceContext))
 		return false;
 
+	HRESULT result = CoInitialize((LPVOID)0); //initialize Renderer
+	if (FAILED(result))
+		return false;
+
 
 	//Create communicator and start thread
 
@@ -175,6 +180,7 @@ bool Engine::Init(HWND& windowHandle)
 		&threadID);
 	if (threadID == NULL)
 		return false;
+
 
 
 	return true;

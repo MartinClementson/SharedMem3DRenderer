@@ -151,6 +151,7 @@
     <ClInclude Include="CircleBuffer.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Graphics.h" />
+    <ClInclude Include="MaterialNode.h" />
     <ClInclude Include="MayaCommunicator.h" />
     <ClInclude Include="ModelNode.h" />
     <ClInclude Include="Resource.h" />
@@ -163,6 +164,7 @@
     <ClInclude Include="Structures.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TransformNode.h" />
+    <ClInclude Include="WICTextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BufferHandler.cpp" />
@@ -173,6 +175,7 @@
     </ClCompile>
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="MaterialNode.cpp" />
     <ClCompile Include="MayaCommunicator.cpp" />
     <ClCompile Include="ModelNode.cpp" />
     <ClCompile Include="ResourceManager.cpp" />

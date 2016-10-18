@@ -2,10 +2,14 @@
 #include "SharedMem3DRenderer.h"
 #include <string>
 #include "Structures.h"
+
 using namespace std;
 
 
-
+enum TextureTypes {
+	DIFFUSE,
+	NORMAL
+};
 
 struct Matrix
 {
@@ -78,3 +82,33 @@ struct DeleteMessage
 	unsigned int nameLength;
 };
 
+
+struct MaterialMessage
+{
+	char matName[256];
+	unsigned int numTextures;
+	Float3 diffuse;
+	Float3 ambient;
+	Float3 specularRGB;
+	float specularVal;
+	MaterialMessage()
+	{
+
+		memset(matName, '\0', 256);
+		diffuse = Float3(0, 0, 0);
+		ambient = Float3(0, 0, 0);
+		specularRGB = Float3(0, 0, 0);
+		specularVal = 0;
+		numTextures = 0;
+	}
+
+};
+struct TextureFile
+{
+	char texturePath[256];
+	TextureTypes type;
+	TextureFile()
+	{
+		memset(texturePath, '\0', 256);
+	}
+};
