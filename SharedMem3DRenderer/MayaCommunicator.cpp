@@ -222,8 +222,10 @@ bool MessageHandler::TranslateMessage(char * msg, size_t length)
 			break;
 		}
 		case VERTSEGMENT:
+			VertSegmentMessage * vertSegmentMessage = (VertSegmentMessage*)(msg + sizeof(VertSegmentMessage));
 			break;
 		case VERTEX:
+			VertexMessage * vertSegmentMessage = (VertexMessage*)(msg + sizeof(VertexMessage));
 			break;
 		case CAMERA:
 		{
