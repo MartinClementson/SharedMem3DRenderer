@@ -87,17 +87,19 @@ bool MessageHandler::NewVertexSegment(VertSegmentMessage * msg)
 		if (sceneTransforms->at(msg->nodeName)->IsType(Nodes::NodeType::MESH))
 		{
 			ModelNode* test = (ModelNode*)sceneTransforms->at(msg->nodeName);
-			std::shared_ptr<Vertex> newVertData = std::shared_ptr<Vertex>(new Vertex[msg->numVertices]);
 
+			unsigned int offset = sizeof(VertSegmentMessage);
+			for (size_t i = 0; i < msg->numVertices; i++)
+			{
+				VertexMessage * vertMessage = (VertexMessage*)((char*)msg + offset);
+				Vertex VertData = vertMessage->vert;
+				UINT IndData = vertMessage->indexId;
 
-
-			VertexMessage * vertMessage = (VertexMessage*)(msg + sizeof(VertSegmentMessage) + sizeof(VertexMessage));
-			Vertex VertData = vertMessage->vert;
-			UINT IndData = vertMessage->indexId;
-
-			test->UpdateModelData(VertData, IndData);
-
+				test->UpdateModelData(VertData, IndData);
+				offset += sizeof(VertexMessage);	
+			}
 			test->Dirtify();
+
 		}
 	}
 	else
@@ -253,7 +255,8 @@ bool MessageHandler::TranslateMessage(char * msg, size_t length)
 		}
 		case VERTSEGMENT:
 		{
-			VertSegmentMessage * vertSegmentMessage = (VertSegmentMessage*)(msg + sizeof(VertSegmentMessage));
+			VertSegmentMessage * vertSegmentMessage = (VertSegmentMessage*)(msg + sizeof(MainMessageHeader));
+			VertexMessage * vertMessage = (VertexMessage*)(msg + sizeof(MainMessageHeader) + sizeof(VertSegmentMessage));
 			NewVertexSegment(vertSegmentMessage);
 			break;
 		}

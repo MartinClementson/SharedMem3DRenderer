@@ -16,8 +16,8 @@ private:
 
 	ID3D11Buffer* vertexBuffer	= nullptr;
 	ID3D11Buffer* indexBuffer	= nullptr;
-	std::shared_ptr<Vertex> vertexData;
-	std::shared_ptr<UINT> indexData;
+	std::shared_ptr<Vertex> vertexData	= nullptr;
+	std::shared_ptr<UINT> indexData		= nullptr;
 	bool newModelData = false;
 	
 public:

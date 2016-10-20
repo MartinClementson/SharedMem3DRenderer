@@ -7,7 +7,10 @@ void ModelNode::CreateVertexBuffer(Vertex * vertices, unsigned int amount)
 	if (this->vertexBuffer != nullptr)
 		SAFE_RELEASE(vertexBuffer);
 
-	this->vertexData = std::shared_ptr<Vertex>(new Vertex[amount]);
+	if (vertexData == nullptr)
+	{
+		this->vertexData = std::shared_ptr<Vertex>(new Vertex[amount]);
+	}
 	memcpy(vertexData.get(), vertices, sizeof(Vertex) * amount);
 
 	D3D11_BUFFER_DESC bufferDesc;
@@ -45,8 +48,10 @@ void ModelNode::CreateIndexBuffer(UINT * indices, unsigned int amount)
 
 	if (this->indexBuffer != nullptr)
 		SAFE_RELEASE(indexBuffer);
-
-	this->indexData = std::shared_ptr<UINT>(new UINT[amount]);
+	if (indexData == nullptr)
+	{
+		this->indexData = std::shared_ptr<UINT>(new UINT[amount]);
+	}
 	memcpy(indexData.get(), indices, sizeof(UINT) * amount);
 
 	D3D11_BUFFER_DESC ibd;
@@ -101,11 +106,11 @@ void ModelNode::Render()
 		if (newModelData)
 		{
 			this->CreateVertexBuffer(this->vertexData.get(), vertCount);
-			this->CreateIndexBuffer(this->indexData.get(), indexCount);
-			newModelData = false;
+			//this->CreateIndexBuffer(this->indexData.get(), indexCount);
+			this->newModelData = false;
 		}
 
-		isDirty = false;
+		this->isDirty = false;
 	}
 	ID3D11Buffer* world = BufferHandler::GetInstance()->Buffers()->bWorldBuffer;
 	D3D11_MAPPED_SUBRESOURCE mappedResourceWorld;
@@ -146,8 +151,15 @@ void ModelNode::SetWorldMatrix(XMMATRIX & matrix)
 
 void ModelNode::UpdateModelData(Vertex newVertData, UINT newIndData)
 {
-	this->vertexData.get()[newIndData] = newVertData;
-	this->indexData.get()[newIndData] = newIndData;
+	for (size_t i = 0; i < this->vertCount; i++)
+	{
+		if (vertexData.get()[i].logicalIndex == newIndData)
+		{
+			newVertData.normal = vertexData.get()[i].normal; //for testing only it is very bad to do FY SKÄMS JOHAN
+			memcpy(&vertexData.get()[i], (char*)&newVertData, sizeof(Vertex));
+			//this->indexData.get()[newIndData] = newIndData;
+		}
+	}
 }
 
 
