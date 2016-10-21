@@ -11,13 +11,11 @@ private:
 
 	ID3D11Device *gDevice			    = nullptr;
 	ID3D11DeviceContext* gDeviceContext = nullptr;
-	UINT			vertCount  = 0;
-	UINT			indexCount = 0;
-
-	ID3D11Buffer* vertexBuffer	= nullptr;
-	ID3D11Buffer* indexBuffer	= nullptr;
-	
-	MaterialNode* materialRef = nullptr;
+	ID3D11Buffer* vertexBuffer			= nullptr;
+	ID3D11Buffer* indexBuffer			= nullptr;
+	MaterialNode* materialRef		    = nullptr;
+	UINT			vertCount   = 0;
+	UINT			indexCount  = 0;
 	
 public:
 	ModelNode();
@@ -30,7 +28,8 @@ public:
 
 	void CreateIndexBuffer(UINT * indices, unsigned int amount);
 
-	MaterialNode* GetMaterial() { return this->materialRef; };
+	void SetMaterial(MaterialNode* mat) { this->materialRef = mat;  };
+	MaterialNode* GetMaterial()			{ return this->materialRef; };
 	~ModelNode();
 	
 	///void UpdateModel();

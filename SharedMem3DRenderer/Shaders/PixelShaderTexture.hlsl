@@ -128,9 +128,9 @@ float fDot =  saturate(dot(vRay, normalize(normal)));
 //
 // 3d game programming book. p.330
 ///////
-    float3 ambient = ambient.xyz;
+    float3 ambientCol = ambient.xyz;
 
-    float3 diffuse = color * fDot + ambient;
+    float3 diffuse = color * fDot + ambientCol;
 //
 //
 //float3 finalCol = (diffuse + ambient);

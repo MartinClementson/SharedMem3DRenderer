@@ -37,50 +37,80 @@ bool ResourceManager::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDevice
 		return false;
 
 
-	Vertex cubeVerts[8];
+	//Vertex cubeVerts[8];
+	//
+	//cubeVerts[0].position = Float3(-0.5, 2.5,  0.5);		//0
+	//cubeVerts[1].position = Float3(-0.5, 0.0,  0.5);		//1
+	//cubeVerts[2].position = Float3(0.5, 0.0,   0.5);		//2
+	//cubeVerts[3].position = Float3(0.5, 2.5,   0.5);		//3
+	//cubeVerts[4].position = Float3(0.5, 0.0,  -0.5);		//4
+	//cubeVerts[5].position = Float3(0.5, 2.5,  -0.5);		//5
+	//cubeVerts[6].position = Float3(-0.5, 0.0, -0.5);		//6
+	//cubeVerts[7].position = Float3(-0.5, 2.5, -0.5);		//7
+	//
+	//
+	//cubeVerts[0].normal = Float3(0, 0, 1);		//0
+	//cubeVerts[1].normal = Float3(0, 0, 1);		//1
+	//cubeVerts[2].normal = Float3(0, 0, 1);		//2
+	//cubeVerts[3].normal = Float3(0, 0, 1);		//3
+	//cubeVerts[4].normal = Float3(0, 1, 0);		//4
+	//cubeVerts[5].normal = Float3(0, 1, 0);		//5
+	//cubeVerts[6].normal = Float3(0, 1, 0);		//6
+	//cubeVerts[7].normal = Float3(0, 1, 0);		//7
+	//
+	//UINT indices[36] =
+	//{
+	//	0,1,2,
+	//	0,2,3,
+	//	3,2,4,
+	//	3,4,5,
+	//	5,4,6,
+	//	5,6,7,
+	//	7,6,1,
+	//	7,1,0,
+	//	0,3,5,
+	//	0,5,7,
+	//	1,4,2,
+	//	1,6,4 };
 
-	cubeVerts[0].position = Float3(-0.5, 2.5,  0.5);		//0
-	cubeVerts[1].position = Float3(-0.5, 0.0,  0.5);		//1
-	cubeVerts[2].position = Float3(0.5, 0.0,   0.5);		//2
-	cubeVerts[3].position = Float3(0.5, 2.5,   0.5);		//3
-	cubeVerts[4].position = Float3(0.5, 0.0,  -0.5);		//4
-	cubeVerts[5].position = Float3(0.5, 2.5,  -0.5);		//5
-	cubeVerts[6].position = Float3(-0.5, 0.0, -0.5);		//6
-	cubeVerts[7].position = Float3(-0.5, 2.5, -0.5);		//7
+	Vertex planeVerts[4];
+
+	planeVerts[0].position = Float3(-1.0,  1.0, 0.0);		//0
+	planeVerts[1].position = Float3(-1.0, -1.0, 0.0);		//1
+	planeVerts[2].position = Float3(1.0,   1.0, 0.0);		//2
+	planeVerts[3].position = Float3(1.0,  -1.0, 0.0);		//3
 
 
-	cubeVerts[0].normal = Float3(0, 0, 1);		//0
-	cubeVerts[1].normal = Float3(0, 0, 1);		//1
-	cubeVerts[2].normal = Float3(0, 0, 1);		//2
-	cubeVerts[3].normal = Float3(0, 0, 1);		//3
-	cubeVerts[4].normal = Float3(0, 1, 0);		//4
-	cubeVerts[5].normal = Float3(0, 1, 0);		//5
-	cubeVerts[6].normal = Float3(0, 1, 0);		//6
-	cubeVerts[7].normal = Float3(0, 1, 0);		//7
 
-	UINT indices[36] =
+	planeVerts[0].normal = Float3(0, 0, 1);		//0
+	planeVerts[1].normal = Float3(0, 0, 1);		//1
+	planeVerts[2].normal = Float3(0, 0, 1);		//2
+	planeVerts[3].normal = Float3(0, 0, 1);		//3
+	
+	planeVerts[0].uv = Float2(0.0f, 0.0f);
+	planeVerts[1].uv = Float2(0.0f, 1.0f);
+	planeVerts[2].uv = Float2(1.0f, 0.0f);
+	planeVerts[3].uv = Float2(1.0f, 1.0f);
+	UINT indices[6] =
 	{
 		0,1,2,
 		0,2,3,
-		3,2,4,
-		3,4,5,
-		5,4,6,
-		5,6,7,
-		7,6,1,
-		7,1,0,
-		0,3,5,
-		0,5,7,
-		1,4,2,
-		1,6,4 };
+	 };
 
-	this->testModel->CreateVertexBuffer(cubeVerts, 8);
-	this->testModel->CreateIndexBuffer(indices, 36);
+
+
+	this->testModel->CreateVertexBuffer(planeVerts, 4);
+	this->testModel->CreateIndexBuffer(indices, 6);
 
 	//this->sceneTransforms["pCube1"] = testModel;
+	this->sceneTransforms["pCube1"] = testModel;
 	this->sceneTransforms["persp"]  = camera;
 
+	this->testMaterial = new MaterialNode();
+	testMaterial->Init(gDevice, gDeviceContext);
+	this->sceneMaterials["lambert1"] = testMaterial;
 
-
+	testModel->SetMaterial(testMaterial);
 	return true;
 }
 
@@ -93,12 +123,17 @@ void ResourceManager::AddNewMesh(string name, Vertex * verts, UINT numVerts, UIN
 	if (sceneTransforms.find(name) == sceneTransforms.end())
 	{
 		 //only add if it doesent already exist
-		ModelNode * tempModel = new ModelNode();
-		tempModel->Init(gDevice, gDeviceContext);
+		ModelNode * tempModel = new ModelNode(); //memory freed in destructor
+		if (!tempModel->Init(gDevice, gDeviceContext))
+		{
+			delete tempModel;
+			return;
+		}
 	
 		tempModel->CreateVertexBuffer(verts, numVerts);
 		tempModel->CreateIndexBuffer(indices, numIndices);
 		tempModel->SetWorldMatrix(*worldMatrix);
+		tempModel->SetMaterial(sceneMaterials["lambert1"]);
 	
 	//	tempNewModel = tempModel;
 		gMutex->Lock();
@@ -116,13 +151,22 @@ ResourceManager::ResourceManager()
 
 void ResourceManager::AddNewMaterial(MaterialMessage * mat, TextureFile * textures)
 {
-	MaterialNode* newMaterial = new MaterialNode(); // memory freed in destructor
-	newMaterial->Init(gDevice, gDeviceContext);
 
-	newMaterial->CreateFromMessage(mat, textures);
+	if (sceneMaterials.find(string(mat->matName)) == sceneMaterials.end())
+	{ //If it doesent exist already
 
-	this->sceneMaterials[string(mat->matName)] = newMaterial;
+		MaterialNode* newMaterial = new MaterialNode(); // memory freed in destructor
+		newMaterial->Init(gDevice, gDeviceContext);
 
+		newMaterial->CreateFromMessage(mat, textures);
+
+		this->sceneMaterials[string(mat->matName)] = newMaterial;
+	}
+	else //it already exists
+	{
+
+		sceneMaterials[string(mat->matName)]->CreateFromMessage(mat, textures);
+	}
 
 }
 

@@ -2,7 +2,7 @@
 #include "Structures.h"
 #include "SharedMem3DRenderer.h"
 #include "SharedMemHeaders.h"
-#include "WICTextureLoader.h"
+#include "DirectXTK/Src/WICTextureLoader.h"
 #include "BufferHandler.h"
 
 class MaterialNode
@@ -10,14 +10,15 @@ class MaterialNode
 #define MAX_TEXTURES 2
 	
 private:
+	ID3D11Device				*gDevice;
+	ID3D11DeviceContext			*gDeviceContext;
 
-	unsigned int usedTextures = 0;
-	MaterialBuffer materialData;
-	ID3D11Device *gDevice;
-	ID3D11DeviceContext* gDeviceContext;
+	const Nodes::NodeType thisType = Nodes::MATERIAL;
+	bool texturesChanged		   = false;
+	unsigned int				usedTextures = 0;
+	MaterialBuffer				materialData;
 	std::string materialName;
-	std::vector<TextureFile> textureFiles;
-	Nodes::NodeType thisType = Nodes::MATERIAL;
+	std::vector<TextureFile>	 textureFiles;
 	ID3D11ShaderResourceView *  textureMaps[MAX_TEXTURES] = { nullptr };
 	
 	bool isDirty = false;

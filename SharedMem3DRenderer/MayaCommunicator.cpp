@@ -50,15 +50,15 @@ MayaCommunicator::~MayaCommunicator()
 bool MessageHandler::NewMesh(MeshMessage * msg)
 {
 
-
+	//The memory allocated here goes into the model node on the main thread
 	std::shared_ptr<Vertex> vertices = std::shared_ptr<Vertex>(new Vertex[msg->vertexCount]);
+	std::shared_ptr<UINT>   indices  = std::shared_ptr<UINT>(new UINT[msg->indexCount]);
 
 	unsigned int offset = sizeof(MeshMessage);
 	memcpy(vertices.get(), (char*)msg + offset, sizeof(Vertex)*msg->vertexCount);
 
 	offset += sizeof(Vertex)*msg->vertexCount;
 
-	std::shared_ptr<UINT> indices = std::shared_ptr<UINT>(new UINT[msg->indexCount]);
 
 	memcpy(indices.get(), (char*)msg + offset, sizeof(UINT)* msg->indexCount);
 
@@ -84,7 +84,7 @@ XMFLOAT4X4 MessageHandler::OpenGLMatrixToDirectX(XMMATRIX & glMatrix)
 		0, 0, 1, 0,
 		0, 0, 0, 1);
 
-	glMatrix = XMMatrixMultiply(glMatrix, mToggle_XZ);
+	//glMatrix = XMMatrixMultiply(glMatrix, mToggle_XZ);
 	glMatrix = XMMatrixTranspose(glMatrix);
 
 	XMFLOAT4X4 toReturn;
@@ -119,12 +119,6 @@ bool MessageHandler::Transform(TransformMessage * msg)
 
 bool MessageHandler::UpdateCamera(CameraMessage * msg)
 {
-
-	
-
-
-
-
 	std::map < string, TransformNode*> *sceneTransforms;
 
 	sceneTransforms = &ResourceManager::GetInstance()->sceneTransforms;
@@ -238,28 +232,12 @@ bool MessageHandler::TranslateMessage(char * msg, size_t length)
 		case MATERIAL:
 		{
 			std::map < string, MaterialNode*> *sceneMaterials;
-
 			sceneMaterials = &ResourceManager::GetInstance()->sceneMaterials;
 			MaterialMessage * matMessage = (MaterialMessage*)(msg + sizeof(MainMessageHeader));
 
 			TextureFile* textures = (TextureFile*)(msg + sizeof(MainMessageHeader) + sizeof(MaterialMessage));
-
-			
-			if (sceneMaterials->find(matMessage->matName) != sceneMaterials->end())
-			{
-				//the material exists
-				if (sceneMaterials->at(matMessage->matName)->IsType(Nodes::NodeType::MATERIAL))
-				{
-
-				}
-
-			}
-			else
-			{
-				ResourceManager::GetInstance()->AddNewMaterial(matMessage, textures);
-			}
-
-
+			//This will also handle updating of already existing materials
+			ResourceManager::GetInstance()->AddNewMaterial(matMessage, textures); 
 			break;
 		}
 	

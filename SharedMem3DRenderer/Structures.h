@@ -1,6 +1,6 @@
 #pragma once
 #define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
-
+#include "SharedMem3DRenderer.h"
 namespace Nodes {
 
 	enum NodeType {
@@ -23,7 +23,7 @@ struct Float3
 		this->x = x;
 		this->y = y;
 		this->z = z;
-	}
+	};
 	Float3() {};
 
 	Float3(double* pos)
@@ -32,7 +32,7 @@ struct Float3
 		this->y = float(pos[1]);
 		this->z = float(pos[2]);
 
-	}
+	};
 
 	Float3& operator=(double* pos)
 	{
@@ -41,7 +41,7 @@ struct Float3
 		this->z = float(pos[2]);
 
 		return *this;
-	}
+	};
 };
 
 struct Float2
@@ -135,7 +135,7 @@ struct MaterialBuffer
 		 specularValue = 0.0f;
 		 DirectX::XMFLOAT3 padding = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 									
-	}								
+	};
 
 };
 

@@ -94,6 +94,11 @@ void ModelNode::Render()
 
 		isDirty = false;
 	}
+
+	assert(materialRef != nullptr);
+	this->materialRef->SetActive();
+
+
 	ID3D11Buffer* world = BufferHandler::GetInstance()->Buffers()->bWorldBuffer;
 	D3D11_MAPPED_SUBRESOURCE mappedResourceWorld;
 	ZeroMemory(&mappedResourceWorld, sizeof(mappedResourceWorld));

@@ -3,7 +3,7 @@
 inline DirectX::XMFLOAT4 Float3ToXMFLOAT4 (const Float3& other) { 
 	DirectX::XMFLOAT4 result; 
 
-
+	
 	result.x = other.x;
 	result.y = other.y;
 	result.z = other.z;
@@ -16,15 +16,19 @@ inline DirectX::XMFLOAT4 Float3ToXMFLOAT4 (const Float3& other) {
 
 bool MaterialNode::UpdateMaterial()
 {
-	for (size_t i = 0; i < textureFiles.size(); i++)
+	if (texturesChanged)
 	{
 
-		if (!AddTexture(string(textureFiles[i].texturePath), textureFiles[i].type))
-				MessageBox(NULL, TEXT("Could not add texture file"), TEXT("ERROR"), MB_OK);
+		for (size_t i = 0; i < textureFiles.size(); i++)
+		{
+
+			if (!AddTexture(string(textureFiles[i].texturePath), textureFiles[i].type))
+					MessageBox(NULL, TEXT("Could not add texture file"), TEXT("ERROR"), MB_OK);
+			
+		}	
 		
-	}	
-	//The texture file has been processed. So remove it to avoid unnecessary add
-	textureFiles.clear();
+		texturesChanged = false;
+	}
 
 	// update const buffer
 
@@ -55,12 +59,11 @@ bool MaterialNode::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceCon
 
 bool MaterialNode::CreateFromMessage(MaterialMessage* material, TextureFile* textures )
 {
-	this->materialName  = string(material->matName);
+	this->materialName					= string(material->matName);
 	this->materialData.diffuse			= Float3ToXMFLOAT4(material->diffuse);
 	this->materialData.ambient			= Float3ToXMFLOAT4(material->ambient);
 	this->materialData.specularRGB		= Float3ToXMFLOAT4(material->specularRGB);
 	this->materialData.specularValue	= material->specularVal;
-	
 	
 	for (size_t i = 0; i < material->numTextures; i++)
 	{
@@ -79,13 +82,15 @@ bool MaterialNode::CreateFromMessage(MaterialMessage* material, TextureFile* tex
 					continue;
 				}
 			}
+			
 		}
 		else
 			textureFiles.at(textures[i].type) = textures[i];
-		
-	}
-	
 
+		texturesChanged = true;
+	}
+
+	isDirty = true;
 	return true;
 }
 
@@ -104,9 +109,10 @@ bool MaterialNode::AddTexture(std::string & path, TextureTypes type)
 	
 	HRESULT hr = DirectX::CreateWICTextureFromFile(gDevice, fileName, nullptr, &textureMaps[type]);
 	
+	if (FAILED(hr))
+		return false;
 
-
-	return false;
+	return true;
 }
 
 MaterialNode::MaterialNode()

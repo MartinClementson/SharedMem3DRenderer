@@ -31,6 +31,8 @@ public:
 	ModelNode* testModel; //temp
 	void AddNewMesh(string name, Vertex* verts, UINT numVerts, UINT* indices, UINT numIndices, XMFLOAT4X4* worldMatrix);
 	vector<ModelNode*>* Models() { return &this->models; };
+
+	MaterialNode* testMaterial;
 	
 	static ResourceManager* GetInstance() {
 		static ResourceManager instance;
