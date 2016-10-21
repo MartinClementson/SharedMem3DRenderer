@@ -16,67 +16,70 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{49c33cf9-b55b-485b-bdda-77a5e2e30aee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Project Headers">
+      <UniqueIdentifier>{99f0ca0a-2e53-4aa3-86da-40d49d3639a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
     <Text Include="Checklist.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SharedMem3DRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Structures.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="BufferHandler.h">
+      <Filter>Project Headers</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BufferHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TransformNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MayaCommunicator.h">
-      <Filter>Header Files</Filter>
+      <Filter>Project Headers</Filter>
     </ClInclude>
     <ClInclude Include="CircleBuffer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Project Headers</Filter>
     </ClInclude>
-    <ClInclude Include="SharedMutex.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Engine.h">
+      <Filter>Project Headers</Filter>
     </ClInclude>
-    <ClInclude Include="SharedMemHeaders.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Graphics.h">
+      <Filter>Project Headers</Filter>
     </ClInclude>
     <ClInclude Include="MaterialNode.h">
-      <Filter>Header Files</Filter>
+      <Filter>Project Headers</Filter>
     </ClInclude>
-    <ClInclude Include="WICTextureLoader.h">
+    <ClInclude Include="MayaCommunicator.h">
+      <Filter>Project Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelNode.h">
+      <Filter>Project Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Project Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Project Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderManager.h">
+      <Filter>Project Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedMem3DRenderer.h">
+      <Filter>Project Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedMemHeaders.h">
+      <Filter>Project Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedMutex.h">
+      <Filter>Project Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Project Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Structures.h">
+      <Filter>Project Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Project Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformNode.h">
+      <Filter>Project Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="WICTextureLoader\WICTextureLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -121,6 +124,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MaterialNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WICTextureLoader\WICTextureLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

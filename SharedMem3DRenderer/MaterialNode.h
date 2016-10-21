@@ -2,7 +2,7 @@
 #include "Structures.h"
 #include "SharedMem3DRenderer.h"
 #include "SharedMemHeaders.h"
-#include "DirectXTK/Src/WICTextureLoader.h"
+#include "WICTextureLoader\WICTextureLoader.h"
 #include "BufferHandler.h"
 
 class MaterialNode
