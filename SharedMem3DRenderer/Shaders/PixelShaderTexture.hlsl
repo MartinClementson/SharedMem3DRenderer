@@ -21,7 +21,9 @@ cbuffer materialAttributes : register(b2)
     float4 ambient;
     float4 specularRGB;
     float  specularValue; 
-	float3 pad;
+	bool  usingDiffuseTex;
+	bool  usingNormalTex;
+	float pad;
 
 };
 //
@@ -101,7 +103,7 @@ float3 v = normalize(input.camPos - input.wPos).xyz;
 ////Calculate how much of the pixel is to be lit "intensity"
 float fDot =  saturate(dot(vRay, normalize(normal)));
 
-    float3 color = diffuse.xyz;
+
     
     //lightColor.xyz;
 //   
@@ -113,7 +115,23 @@ float fDot =  saturate(dot(vRay, normalize(normal)));
 ////float3 specularLight = { KS * pow(max(dot(r,v),0.0f),shinyPower) };
 //    float3 textureSample;
 //
+
+float3 color;
 float3 textureSample = shaderTexture.Sample(SampleType, input.Texture).xyz;
+float textureSum = textureSample.x + textureSample.y + textureSample.z;
+	
+if (usingDiffuseTex == true)
+{
+	color = textureSample;
+
+}
+else
+{
+	color = diffuse.xyz;
+
+}
+	
+
 //
 //
 //    float3 ambient = KA.rgb;
@@ -147,6 +165,6 @@ float3 textureSample = shaderTexture.Sample(SampleType, input.Texture).xyz;
   //
   //float4 col = { diffuse, 1.0 };
 	//float4 col = { float3(1.0f,0.0f,0.0f), 1.0 };
-	float4 col = { textureSample, 1.0 };
+	float4 col = { color, 1.0 };
     return col;
 }

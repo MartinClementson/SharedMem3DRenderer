@@ -72,11 +72,11 @@ ModelNode::ModelNode(): TransformNode()
 
 
 
-bool ModelNode::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceContext)
+bool ModelNode::Init(ID3D11Device *gDevice, ID3D11DeviceContext* gDeviceContext, string id)
 {
 	this->gDevice = gDevice;
 	this->gDeviceContext = gDeviceContext;
-
+	this->id = id;
 
 	isDirty = true;
 
@@ -99,17 +99,17 @@ void ModelNode::Render()
 	this->materialRef->SetActive();
 
 
-	ID3D11Buffer* world = BufferHandler::GetInstance()->Buffers()->bWorldBuffer;
-	D3D11_MAPPED_SUBRESOURCE mappedResourceWorld;
-	ZeroMemory(&mappedResourceWorld, sizeof(mappedResourceWorld));
-
-	this->gDeviceContext->Map(world, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResourceWorld);
-
-	WorldBuffer* temporaryWorld = (WorldBuffer*)mappedResourceWorld.pData;
-
-	*temporaryWorld = this->worldbuffer;
-
-	this->gDeviceContext->Unmap(world, 0);
+	BufferHandler::GetInstance()->Buffers()->bWorldBuffer.UpdateBuffer(&worldbuffer,&this->id);
+//D3D11_MAPPED_SUBRESOURCE mappedResourceWorld;
+//ZeroMemory(&mappedResourceWorld, sizeof(mappedResourceWorld));
+//
+//this->gDeviceContext->Map(world, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResourceWorld);
+//
+//WorldBuffer* temporaryWorld = (WorldBuffer*)mappedResourceWorld.pData;
+//
+//*temporaryWorld = this->worldbuffer;
+//
+//this->gDeviceContext->Unmap(world, 0);
 
 	UINT32 vertexSize = sizeof(Vertex);
 	UINT32 offset = 0;

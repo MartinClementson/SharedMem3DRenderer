@@ -2,9 +2,6 @@
 #include "BufferHandler.h"
 
 
-BufferHandler::BufferHandler()
-{
-}
 
 
 bool BufferHandler::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceContext)
@@ -24,9 +21,9 @@ bool BufferHandler::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceCo
 	bufferDescWorld.MiscFlags = 0;
 	bufferDescWorld.StructureByteStride = 0;
 
-	hr = this->gDevice->CreateBuffer(&bufferDescWorld, nullptr, &buffers.bWorldBuffer);
+	hr = this->gDevice->CreateBuffer(&bufferDescWorld, nullptr, &buffers.bWorldBuffer.gD3Dbuffer);
 	if (SUCCEEDED(hr))
-		this->gDeviceContext->GSSetConstantBuffers(WORLDBUFFER_SLOT, 1, &buffers.bWorldBuffer);
+		this->gDeviceContext->GSSetConstantBuffers(WORLDBUFFER_SLOT, 1, &buffers.bWorldBuffer.gD3Dbuffer);
 	else
 		return false;
 
@@ -41,9 +38,9 @@ bool BufferHandler::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceCo
 	bufferDesc.MiscFlags			= 0;
 	bufferDesc.StructureByteStride  = 0;
 
-	hr = this->gDevice->CreateBuffer(&bufferDesc, nullptr, &buffers.bCameraBuffer);
+	hr = this->gDevice->CreateBuffer(&bufferDesc, nullptr, &buffers.bCameraBuffer.gD3Dbuffer);
 	if (SUCCEEDED(hr))
-		this->gDeviceContext->GSSetConstantBuffers(CAMERABUFFER_SLOT, 1, &buffers.bCameraBuffer);
+		this->gDeviceContext->GSSetConstantBuffers(CAMERABUFFER_SLOT, 1, &buffers.bCameraBuffer.gD3Dbuffer);
 	else
 		return false;
 
@@ -59,9 +56,9 @@ bool BufferHandler::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceCo
 	bufferDescMat.MiscFlags		   = 0;
 	bufferDescMat.StructureByteStride = 0;
 
-	hr = this->gDevice->CreateBuffer(&bufferDescMat, nullptr, &buffers.bMaterialBuffer);
+	hr = this->gDevice->CreateBuffer(&bufferDescMat, nullptr, &buffers.bMaterialBuffer.gD3Dbuffer);
 	if (SUCCEEDED(hr))
-		this->gDeviceContext->PSSetConstantBuffers(MATERIALBUFFER_SLOT, 1, &buffers.bMaterialBuffer);
+		this->gDeviceContext->PSSetConstantBuffers(MATERIALBUFFER_SLOT, 1, &buffers.bMaterialBuffer.gD3Dbuffer);
 	else
 		return false;
 
@@ -75,9 +72,9 @@ bool BufferHandler::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceCo
 	bufferDescLight.MiscFlags			 = 0;
 	bufferDescLight.StructureByteStride  = 0;
 
-	hr = this->gDevice->CreateBuffer(&bufferDescLight, nullptr, &buffers.bLightBuffer);
+	hr = this->gDevice->CreateBuffer(&bufferDescLight, nullptr, &buffers.bLightBuffer.gD3Dbuffer);
 	if (SUCCEEDED(hr))
-		this->gDeviceContext->PSSetConstantBuffers(LIGHTBUFFER_SLOT, 1, &buffers.bLightBuffer);
+		this->gDeviceContext->PSSetConstantBuffers(LIGHTBUFFER_SLOT, 1, &buffers.bLightBuffer.gD3Dbuffer);
 	else
 		return false;
 

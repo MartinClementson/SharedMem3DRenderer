@@ -126,15 +126,20 @@ struct MaterialBuffer
 	DirectX::XMFLOAT4 ambient;
 	DirectX::XMFLOAT4 specularRGB;
 	float specularValue;
-	DirectX::XMFLOAT3 padding;
+	BOOL usingDiffuseTex;
+	BOOL usingNormalTex;
+	float padding;
 	MaterialBuffer()
 	{
 		 diffuse	   = DirectX::XMFLOAT4(0.5f,0.5f,0.5f,1.0f);
 		 ambient	   = DirectX::XMFLOAT4(0.0f,0.0f,0.0f,1.0f);
 		 specularRGB   = DirectX::XMFLOAT4(0.0f,0.0f,0.0f,1.0f);
 		 specularValue = 0.0f;
+		
+		 this->usingDiffuseTex = FALSE;
+		 this->usingNormalTex  = FALSE;
 		 DirectX::XMFLOAT3 padding = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
-									
+		
 	};
 
 };

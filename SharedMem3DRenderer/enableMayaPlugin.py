@@ -14,6 +14,7 @@ ADDR=(HOST,PORT)
 #unloadPluginWithCheck( "C:/Program Files/Autodesk/Maya2016/bin/plug-ins/Custom Plugins/MayaPlugin Project_ MartinClementson.mll" );
 
 
+#To use : write this in visual studio : c:\Python27\python.exe C:\Windows\Temp\file.py
 def SendCommand():
 	client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	client.connect(ADDR)

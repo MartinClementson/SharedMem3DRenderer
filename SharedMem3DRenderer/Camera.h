@@ -22,7 +22,7 @@ private:
 	void UpdateCamBuffer(); 
 public:
 	void UpdateIfDirty();
-	bool Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceContext);
+	bool Init(ID3D11Device *gDevice, ID3D11DeviceContext* gDeviceContext, std::string id);
 	bool UpdateViewAndProj(XMFLOAT4X4& view, XMFLOAT4X4& proj);
 	void SetPosition(XMFLOAT3& newPos);
 	void SetPosition(Float3 &newPos);

@@ -103,6 +103,8 @@ struct MaterialMessage
 	{
 
 		memset(matName, '\0', 256);
+		matName[0] = 0;
+
 		diffuse = Float3(0, 0, 0);
 		ambient = Float3(0, 0, 0);
 		specularRGB = Float3(0, 0, 0);

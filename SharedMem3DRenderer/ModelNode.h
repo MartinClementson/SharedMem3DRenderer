@@ -19,7 +19,7 @@ private:
 	
 public:
 	ModelNode();
-	bool Init(ID3D11Device *gDevice, ID3D11DeviceContext* gDeviceContext);
+	bool Init(ID3D11Device *gDevice, ID3D11DeviceContext* gDeviceContext, string id);
 	void Render();
 	void SetWorldMatrix(XMFLOAT4X4 &matrix);
 	void SetWorldMatrix(XMMATRIX&matrix);

@@ -32,8 +32,8 @@ bool ResourceManager::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDevice
 	this->gMutex		 =  std::unique_ptr<SharedMemory::SharedMutex>( new SharedMemory::SharedMutex(mutexName));
 	this->camera         = new Camera();
 	
-	testModel->Init(gDevice, gDeviceContext);
-	if (!camera->Init(gDevice, gDeviceContext))
+	testModel->Init(gDevice, gDeviceContext,"testModel");
+	if (!camera->Init(gDevice, gDeviceContext,"persp"))
 		return false;
 
 
@@ -103,12 +103,12 @@ bool ResourceManager::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDevice
 	this->testModel->CreateIndexBuffer(indices, 6);
 
 	//this->sceneTransforms["pCube1"] = testModel;
-	this->sceneTransforms["pCube1"] = testModel;
+	this->sceneTransforms["testModel"] = testModel;
 	this->sceneTransforms["persp"]  = camera;
 
 	this->testMaterial = new MaterialNode();
 	testMaterial->Init(gDevice, gDeviceContext);
-	this->sceneMaterials["lambert1"] = testMaterial;
+	this->sceneMaterials["standard"] = testMaterial;
 
 	testModel->SetMaterial(testMaterial);
 	return true;
@@ -130,7 +130,7 @@ void ResourceManager::AddNewMesh(string name,
 	{
 		 //only add if it doesent already exist
 		ModelNode * tempModel = new ModelNode(); //memory freed in destructor
-		if (!tempModel->Init(gDevice, gDeviceContext))
+		if (!tempModel->Init(gDevice, gDeviceContext,string(name)))
 		{
 			delete tempModel;
 			return;
@@ -139,17 +139,21 @@ void ResourceManager::AddNewMesh(string name,
 		tempModel->CreateVertexBuffer(verts, numVerts);
 		tempModel->CreateIndexBuffer(indices, numIndices);
 		tempModel->SetWorldMatrix(*worldMatrix);
-		if (sceneMaterials.find(string(materialName)) == sceneMaterials.end())
-		{ // if the material doesent exist, create a new one
-			MaterialNode* newMat = new MaterialNode(materialName); //deleted in destructor
-			newMat->Init(gDevice, gDeviceContext);
-			gMutex->Lock();
-			sceneMaterials[string(materialName)] = newMat;
-			gMutex->Unlock();
-			tempModel->SetMaterial(newMat);
+		if (strlen(materialName) != 0)
+		{
+
+			if (sceneMaterials.find(string(materialName)) == sceneMaterials.end())
+			{ // if the material doesent exist, create a new one
+				MaterialNode* newMat = new MaterialNode(materialName); //deleted in destructor
+				newMat->Init(gDevice, gDeviceContext);
+				gMutex->Lock();
+				sceneMaterials[string(materialName)] = newMat;
+				gMutex->Unlock();
+				tempModel->SetMaterial(newMat);
+			}
+			else
+				tempModel->SetMaterial(sceneMaterials[string(materialName)]);
 		}
-		else
-			tempModel->SetMaterial(sceneMaterials[string(materialName)]);
 
 	
 		gMutex->Lock();

@@ -29,3 +29,9 @@ TODO: efter 18/10
 
 
 HANTERA NAME CHANGE FÖR SAMTLIGA NODES!
+
+
+TODO efter 21/10
+
+kontrollera color från maya.
+lägg till callback i maya när color ändras

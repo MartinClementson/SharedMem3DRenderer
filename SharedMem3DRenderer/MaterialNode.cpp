@@ -18,31 +18,29 @@ bool MaterialNode::UpdateMaterial()
 {
 	if (texturesChanged)
 	{
-
 		for (size_t i = 0; i < textureFiles.size(); i++)
 		{
-
 			if (!AddTexture(string(textureFiles[i].texturePath), textureFiles[i].type))
-					MessageBox(NULL, TEXT("Could not add texture file"), TEXT("ERROR"), MB_OK);
-			
+					MessageBox(NULL, TEXT("Could not add texture file"), TEXT("ERROR"), MB_OK);	
 		}	
-		
 		texturesChanged = false;
 	}
 
+	BufferHandler::GetInstance()->Buffers()->bMaterialBuffer.UpdateBuffer(&this->materialData, &this->materialName);
+
 	// update const buffer
 
-	ID3D11Buffer* matBuffer = BufferHandler::GetInstance()->Buffers()->bMaterialBuffer;
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	ZeroMemory(&mappedResource, sizeof(mappedResource));
-
-	this->gDeviceContext->Map(matBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-
-	MaterialBuffer* temporaryMaterial = (MaterialBuffer*)mappedResource.pData;
-
-	*temporaryMaterial = this->materialData;
-
-	this->gDeviceContext->Unmap(matBuffer, 0);
+	//ID3D11Buffer* matBuffer = BufferHandler::GetInstance()->Buffers()->bMaterialBuffer;
+	//D3D11_MAPPED_SUBRESOURCE mappedResource;
+	//ZeroMemory(&mappedResource, sizeof(mappedResource));
+	//
+	//this->gDeviceContext->Map(matBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	//
+	//MaterialBuffer* temporaryMaterial = (MaterialBuffer*)mappedResource.pData;
+	//
+	//*temporaryMaterial = this->materialData;
+	//
+	//this->gDeviceContext->Unmap(matBuffer, 0);
 
 
 	return true;
@@ -59,9 +57,9 @@ bool MaterialNode::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceCon
 	//if (FAILED(result))
 	//	return false;
 
-	if (!this->AddTexture(string("C:/Users/BTH/Desktop/rock-texture-with-black-pebbles-photoshop-textures.jpg"), TextureTypes::DIFFUSE))
-		MessageBox(NULL, TEXT("ERROR loading texture"), TEXT("ERROR"), MB_OK);
-	texturesChanged = true;
+	//if (!this->AddTexture(string("C:/Users/BTH/Desktop/rock-texture-with-black-pebbles-photoshop-textures.jpg"), TextureTypes::DIFFUSE))
+	//	MessageBox(NULL, TEXT("ERROR loading texture"), TEXT("ERROR"), MB_OK);
+	//texturesChanged = true;
 	isDirty = true;
 	return true;
 }
@@ -110,6 +108,16 @@ bool MaterialNode::AddTexture(std::string & path, TextureTypes type)
 	if (FAILED(hr))
 		return false;
 
+	switch (type)
+	{
+	case DIFFUSE:
+		this->materialData.usingDiffuseTex = TRUE;
+		break;
+	case NORMAL:
+		this->materialData.usingNormalTex = TRUE;
+		break;
+
+	}
 
 	return true;
 }
@@ -135,7 +143,24 @@ bool MaterialNode::SetActive()
 		this->gDeviceContext->PSSetShaderResources(DIFFUSE, 1, &textureMaps[DIFFUSE]);
 	if (textureMaps[NORMAL] != nullptr)
 		this->gDeviceContext->PSSetShaderResources(NORMAL, 1, &textureMaps[NORMAL]);
-	return true;
+
+
+	BufferHandler::GetInstance()->Buffers()->bMaterialBuffer.UpdateBuffer(&this->materialData, &this->materialName);
+	
+	//ID3D11Buffer* buffer = BufferHandler::GetInstance()->Buffers()->bMaterialBuffer;
+	//D3D11_MAPPED_SUBRESOURCE mappedResource;
+	//ZeroMemory(&mappedResource, sizeof(mappedResource));
+	//
+	//this->gDeviceContext->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	//
+	//MaterialBuffer* tempBufferData = (MaterialBuffer*)mappedResource.pData;
+	//
+	//*tempBufferData = this->materialData;
+	//
+	//this->gDeviceContext->Unmap(buffer, 0);
+
+
+return true;
 }
 
 MaterialNode::~MaterialNode()
