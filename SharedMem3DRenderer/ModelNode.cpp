@@ -36,6 +36,30 @@ void ModelNode::CreateVertexBuffer(Vertex * vertices, unsigned int amount)
 
 }
 
+void ModelNode::CreateLogicalIDTracker()
+{
+	UINT length = 1;
+	this->logicalIDs = std::shared_ptr<LogicalIndex>(new LogicalIndex[this->vertCount]);
+	for (size_t i = 0; i < this->vertCount; i++)
+	{
+		if (logicalIDs.get()[i].ID == NULL)
+		{	
+			logicalIDs.get()[i].ID = i;
+			logicalIDs.get()[i].VertsWithID.reserve(4);
+		}
+	}
+	for (size_t j = 0; j < this->vertCount; j++)
+	{
+		for (size_t k = 0; k < this->vertCount; k++)
+		{
+			if (logicalIDs.get()[j].ID == vertexData.get()[k].logicalIndex)
+			{
+				logicalIDs.get()[j].VertsWithID.push_back(&vertexData.get()[k]);
+			}
+		}
+	}
+}
+
 void ModelNode::Dirtify()
 {
 	this->isDirty = true;
@@ -102,11 +126,10 @@ void ModelNode::Render()
 		XMVECTOR worldDet = XMMatrixDeterminant(XMLoadFloat4x4(&worldbuffer.worldMatrix));
 		XMMATRIX normalWorld = XMMatrixInverse(&worldDet, XMLoadFloat4x4(&worldbuffer.worldMatrix));
 		XMStoreFloat4x4(&worldbuffer.normalWorldMatrix, XMMatrixTranspose(normalWorld));
-
 		if (newModelData)
 		{
 			this->CreateVertexBuffer(this->vertexData.get(), vertCount);
-			//this->CreateIndexBuffer(this->indexData.get(), indexCount);
+			this->CreateIndexBuffer(this->indexData.get(), indexCount);
 			this->newModelData = false;
 		}
 
@@ -149,17 +172,41 @@ void ModelNode::SetWorldMatrix(XMMATRIX & matrix)
 
 }
 
-void ModelNode::UpdateModelData(Vertex newVertData, UINT newIndData)
+void ModelNode::UpdateModelData(Vertex* newVertData, UINT newIndData)
 {
+	//for (size_t i = 0; i < this->vertCount; i++)
+	//{
+	//	if (logicalIDs.get()[i].ID == newIndData)
+	//	{
+	//		newVertData->normal = vertexData.get()[i].normal; //for testing only it is very bad to do FY SKÄMS JOHAN
+	//		for (size_t j = 0; j < logicalIDs.get()[i].VertsWithID.size(); j++)
+	//		{
+	//			memcpy(logicalIDs.get()[i].VertsWithID.at(j), newVertData, sizeof(Vertex));
+	//		}
+	//		break;
+	//	}
+	//}
 	for (size_t i = 0; i < this->vertCount; i++)
 	{
 		if (vertexData.get()[i].logicalIndex == newIndData)
 		{
-			newVertData.normal = vertexData.get()[i].normal; //for testing only it is very bad to do FY SKÄMS JOHAN
-			memcpy(&vertexData.get()[i], (char*)&newVertData, sizeof(Vertex));
+			newVertData->normal = vertexData.get()[i].normal; //for testing only it is very bad to do FY SKÄMS JOHAN
+			memcpy(&vertexData.get()[i], newVertData, sizeof(Vertex));
 			//this->indexData.get()[newIndData] = newIndData;
 		}
 	}
+}
+
+void ModelNode::UpdateAllModelData(Vertex * vertices, UINT * indices, UINT numVerts, UINT numIndices)
+{
+	this->vertexData = std::shared_ptr<Vertex>(new Vertex[numVerts]);
+	memcpy(vertexData.get(), (char*)vertices, sizeof(Vertex) * numVerts);
+	this->vertCount = numVerts;
+	this->indexData = std::shared_ptr<UINT>(new UINT[numIndices]);
+	memcpy(indexData.get(), (char*)indices, sizeof(UINT) * numIndices);
+	this->indexCount = numIndices;
+	//this->CreateLogicalIDTracker();
+	this->Dirtify();
 }
 
 

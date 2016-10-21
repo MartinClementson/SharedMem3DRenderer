@@ -16,8 +16,9 @@ private:
 
 	ID3D11Buffer* vertexBuffer	= nullptr;
 	ID3D11Buffer* indexBuffer	= nullptr;
-	std::shared_ptr<Vertex> vertexData	= nullptr;
-	std::shared_ptr<UINT> indexData		= nullptr;
+	std::shared_ptr<Vertex> vertexData		 = nullptr;
+	std::shared_ptr<UINT> indexData			 = nullptr;
+	std::shared_ptr<LogicalIndex> logicalIDs = nullptr;
 	bool newModelData = false;
 	
 public:
@@ -26,8 +27,10 @@ public:
 	void Render();
 	void SetWorldMatrix(XMFLOAT4X4 &matrix);
 	void SetWorldMatrix(XMMATRIX&matrix);
-	void UpdateModelData(Vertex newVertData, UINT newIndData);
+	void UpdateModelData(Vertex* newVertData, UINT newIndData);
+	void UpdateAllModelData(Vertex* vertices, UINT* indices, UINT numVerts, UINT numIndices);
 	void CreateVertexBuffer(Vertex* vertices, unsigned int amount);
+	void CreateLogicalIDTracker();
 	void Dirtify();
 	void CreateIndexBuffer(UINT * indices, unsigned int amount);
 	~ModelNode();

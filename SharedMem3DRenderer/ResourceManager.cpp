@@ -92,18 +92,28 @@ void ResourceManager::AddNewMesh(string name, Vertex * verts, UINT numVerts, UIN
 	}
 	if (sceneTransforms.find(name) == sceneTransforms.end())
 	{
-		 //only add if it doesent already exist
+		//only add if it doesent already exist
 		ModelNode * tempModel = new ModelNode();
 		tempModel->Init(gDevice, gDeviceContext);
-	
+
 		tempModel->CreateVertexBuffer(verts, numVerts);
 		tempModel->CreateIndexBuffer(indices, numIndices);
 		tempModel->SetWorldMatrix(*worldMatrix);
-	
-	//	tempNewModel = tempModel;
+		//tempModel->CreateLogicalIDTracker();
+		//	tempNewModel = tempModel;
 		gMutex->Lock();
 		sceneTransforms[name] = tempModel;
 		gMutex->Unlock();
+
+		isDirty = true;
+	}
+	else
+	{
+		ModelNode* tempModel = (ModelNode*)sceneTransforms[name];
+		gMutex->Lock();
+		tempModel->UpdateAllModelData(verts, indices, numVerts, numIndices);
+		gMutex->Unlock();
+
 		isDirty = true;
 	}
 }

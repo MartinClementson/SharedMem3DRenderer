@@ -103,7 +103,11 @@ struct Vertex
 	Vertex() {};
 };
 
-
+struct LogicalIndex
+{
+	std::vector<Vertex*> VertsWithID;
+	UINT ID = NULL;
+};
 
 struct WorldBuffer
 {

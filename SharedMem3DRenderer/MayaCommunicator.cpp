@@ -95,7 +95,7 @@ bool MessageHandler::NewVertexSegment(VertSegmentMessage * msg)
 				Vertex VertData = vertMessage->vert;
 				UINT IndData = vertMessage->indexId;
 
-				test->UpdateModelData(VertData, IndData);
+				test->UpdateModelData(&VertData, IndData);
 				offset += sizeof(VertexMessage);	
 			}
 			test->Dirtify();
