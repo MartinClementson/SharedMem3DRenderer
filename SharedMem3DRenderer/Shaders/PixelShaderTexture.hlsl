@@ -14,6 +14,7 @@
 //
 //};
 //
+
 cbuffer materialAttributes : register(b2)
 {
     float4 diffuse; 
@@ -27,7 +28,7 @@ cbuffer materialAttributes : register(b2)
 SamplerState SampleType;
 
 //modifies how the pixels are written to the polygon face when shaded
-//Texture2D shaderTexture : register(t0);
+Texture2D shaderTexture : register(t0);
 //Texture2D normalTexture : register(t2);
 //Texture2D renderTexture : register(t4);
 
@@ -112,7 +113,7 @@ float fDot =  saturate(dot(vRay, normalize(normal)));
 ////float3 specularLight = { KS * pow(max(dot(r,v),0.0f),shinyPower) };
 //    float3 textureSample;
 //
-////textureSample = shaderTexture.Sample(SampleType, input.Texture).xyz;
+float3 textureSample = shaderTexture.Sample(SampleType, input.Texture).xyz;
 //
 //
 //    float3 ambient = KA.rgb;
@@ -142,9 +143,10 @@ float fDot =  saturate(dot(vRay, normalize(normal)));
 //finalCol.y = min(finalCol.y, 1.0f);
 //finalCol.z = min(finalCol.z, 1.0f);
 
-
-//float4 col = { finalCol,1.0 };
-
-    float4 col = { diffuse, 1.0 };
+	//float4 col = { finalCol,1.0 };
+  //
+  //float4 col = { diffuse, 1.0 };
+	//float4 col = { float3(1.0f,0.0f,0.0f), 1.0 };
+	float4 col = { textureSample, 1.0 };
     return col;
 }

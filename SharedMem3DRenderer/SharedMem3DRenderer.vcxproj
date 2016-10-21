@@ -106,6 +106,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Command>c:\Python27\python.exe C:\Windows\Temp\file.py</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -200,6 +203,7 @@
   <ItemGroup>
     <Image Include="SharedMem3DRenderer.ico" />
     <Image Include="small.ico" />
+    <Image Include="texture.jpg" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\GeometryShaderTexture.hlsl">

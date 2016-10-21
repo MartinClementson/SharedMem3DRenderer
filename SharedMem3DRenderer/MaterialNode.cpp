@@ -53,7 +53,16 @@ bool MaterialNode::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceCon
 	this->gDevice = gDevice;
 	this->gDeviceContext = gDeviceContext;
 	textureFiles.reserve(MAX_TEXTURES);
+	textureFiles.push_back(TextureFile());
+	textureFiles.push_back(TextureFile());
+	//HRESULT result = CoInitialize((LPVOID)0); //initialize Renderer
+	//if (FAILED(result))
+	//	return false;
 
+	if (!this->AddTexture(string("C:/Users/BTH/Desktop/rock-texture-with-black-pebbles-photoshop-textures.jpg"), TextureTypes::DIFFUSE))
+		MessageBox(NULL, TEXT("ERROR loading texture"), TEXT("ERROR"), MB_OK);
+	texturesChanged = true;
+	isDirty = true;
 	return true;
 }
 
@@ -65,28 +74,9 @@ bool MaterialNode::CreateFromMessage(MaterialMessage* material, TextureFile* tex
 	this->materialData.specularRGB		= Float3ToXMFLOAT4(material->specularRGB);
 	this->materialData.specularValue	= material->specularVal;
 	
-	for (size_t i = 0; i < material->numTextures; i++)
+	for (size_t i = 0; i < material->numTextures; i++) //switch textures
 	{
-		if (textureFiles.size() == MAX_TEXTURES)
-		{	// if the max amount of textures exists, find the one we are to replace
-			for (size_t i = 0; i < MAX_TEXTURES; i++)
-			{
-				if (textureFiles.at(DIFFUSE).type == textures[i].type)
-				{
-					textureFiles.at(DIFFUSE) = textures[i]; //Replace with new textures
-					continue;
-				}
-				if (textureFiles.at(NORMAL).type == textures[i].type)
-				{
-					textureFiles.at(NORMAL) = textures[i]; //Replace with new textures
-					continue;
-				}
-			}
-			
-		}
-		else
-			textureFiles.at(textures[i].type) = textures[i];
-
+		textureFiles.at(textures[i].type) = textures[i];
 		texturesChanged = true;
 	}
 
@@ -98,9 +88,17 @@ bool MaterialNode::CreateFromMessage(MaterialMessage* material, TextureFile* tex
 
 bool MaterialNode::AddTexture(std::string & path, TextureTypes type)
 {
-
+	if (type == NONE)
+		return true;
 	if (this->textureMaps[type] != nullptr)
+	{
 		SAFE_RELEASE(textureMaps[type]);
+
+	}
+	else
+		this->usedTextures += 1;
+	
+		
 
 	
 	std::wstring widestr = std::wstring(path.begin(), path.end());
@@ -112,11 +110,17 @@ bool MaterialNode::AddTexture(std::string & path, TextureTypes type)
 	if (FAILED(hr))
 		return false;
 
+
 	return true;
 }
 
 MaterialNode::MaterialNode()
 {
+}
+
+MaterialNode::MaterialNode(char * name)
+{
+	this->materialName = string(name);
 }
 
 

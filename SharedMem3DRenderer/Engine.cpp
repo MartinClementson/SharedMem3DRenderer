@@ -157,16 +157,16 @@ bool Engine::Init(HWND& windowHandle)
 	vp.TopLeftY = 0;
 	this->gDeviceContext->RSSetViewports(1, &vp);
 		
-
+	HRESULT result = CoInitialize((LPVOID)0); //initialize Renderer
+	if (FAILED(result))
+		return false;
 
 	if (!BufferHandler::GetInstance()->Init(gDevice, gDeviceContext))
 		return false;
 	if (!this->graphics.Init(this->gDevice, this->gDeviceContext))
 		return false;
 
-	HRESULT result = CoInitialize((LPVOID)0); //initialize Renderer
-	if (FAILED(result))
-		return false;
+	
 
 
 	//Create communicator and start thread

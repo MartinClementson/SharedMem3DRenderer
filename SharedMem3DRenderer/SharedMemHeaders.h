@@ -8,7 +8,8 @@ using namespace std;
 
 enum TextureTypes {
 	DIFFUSE,
-	NORMAL
+	NORMAL,
+	NONE
 };
 
 struct Matrix
@@ -42,10 +43,17 @@ struct MainMessageHeader
 struct MeshMessage
 {
 	char nodeName[256];
+	char materialName[256];
 	unsigned int nameLength;
 	float worldMatrix[16];
 	unsigned int vertexCount;
 	unsigned int indexCount;
+
+	MeshMessage()
+	{
+		memset(nodeName, '\0', 256);
+		memset(materialName, '\0', 256);
+	}
 };
 
 struct VertSegmentMessage //for n verts, but not a whole mesh,
@@ -110,5 +118,6 @@ struct TextureFile
 	TextureFile()
 	{
 		memset(texturePath, '\0', 256);
+		type = TextureTypes::NONE;
 	}
 };

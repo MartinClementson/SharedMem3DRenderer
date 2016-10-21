@@ -129,7 +129,7 @@ struct MaterialBuffer
 	DirectX::XMFLOAT3 padding;
 	MaterialBuffer()
 	{
-		 diffuse	   = DirectX::XMFLOAT4(0.0f,0.0f,0.0f,1.0f);
+		 diffuse	   = DirectX::XMFLOAT4(0.5f,0.5f,0.5f,1.0f);
 		 ambient	   = DirectX::XMFLOAT4(0.0f,0.0f,0.0f,1.0f);
 		 specularRGB   = DirectX::XMFLOAT4(0.0f,0.0f,0.0f,1.0f);
 		 specularValue = 0.0f;

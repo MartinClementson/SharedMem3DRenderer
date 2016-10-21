@@ -94,7 +94,7 @@ bool ResourceManager::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDevice
 	UINT indices[6] =
 	{
 		0,1,2,
-		0,2,3,
+		2,1,3,
 	 };
 
 
@@ -114,7 +114,13 @@ bool ResourceManager::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDevice
 	return true;
 }
 
-void ResourceManager::AddNewMesh(string name, Vertex * verts, UINT numVerts, UINT * indices, UINT numIndices, XMFLOAT4X4 * worldMatrix)
+void ResourceManager::AddNewMesh(string name, 
+	Vertex * verts, 
+	UINT numVerts,
+	UINT * indices, 
+	UINT numIndices,
+	XMFLOAT4X4 * worldMatrix,
+	char* materialName)
 {
 	while (isDirty) // make sure the rendering thread is up to date before changing
 	{
@@ -133,9 +139,19 @@ void ResourceManager::AddNewMesh(string name, Vertex * verts, UINT numVerts, UIN
 		tempModel->CreateVertexBuffer(verts, numVerts);
 		tempModel->CreateIndexBuffer(indices, numIndices);
 		tempModel->SetWorldMatrix(*worldMatrix);
-		tempModel->SetMaterial(sceneMaterials["lambert1"]);
+		if (sceneMaterials.find(string(materialName)) == sceneMaterials.end())
+		{ // if the material doesent exist, create a new one
+			MaterialNode* newMat = new MaterialNode(materialName); //deleted in destructor
+			newMat->Init(gDevice, gDeviceContext);
+			gMutex->Lock();
+			sceneMaterials[string(materialName)] = newMat;
+			gMutex->Unlock();
+			tempModel->SetMaterial(newMat);
+		}
+		else
+			tempModel->SetMaterial(sceneMaterials[string(materialName)]);
+
 	
-	//	tempNewModel = tempModel;
 		gMutex->Lock();
 		sceneTransforms[name] = tempModel;
 		gMutex->Unlock();

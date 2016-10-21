@@ -30,6 +30,7 @@ public:
 	bool AddTexture(std::string&  path, TextureTypes type);
 	bool IsType(Nodes::NodeType type) { return (type == thisType ? true : false); };
 	MaterialNode();
+	MaterialNode(char* name);
 	std::string Name() { return this->materialName; };
 	bool SetActive();
 	virtual ~MaterialNode();

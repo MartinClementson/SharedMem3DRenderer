@@ -71,7 +71,13 @@ bool MessageHandler::NewMesh(MeshMessage * msg)
 	DirectX::XMFLOAT4X4 matrixToSend = OpenGLMatrixToDirectX(world);
 
 
-	ResourceManager::GetInstance()->AddNewMesh(msg->nodeName, vertices.get(), msg->vertexCount, indices.get(), msg->indexCount, &matrixToSend);
+	ResourceManager::GetInstance()->AddNewMesh(msg->nodeName, 
+		vertices.get(),
+		msg->vertexCount, 
+		indices.get(), 
+		msg->indexCount, 
+		&matrixToSend,
+		msg->materialName);
 
 	return true;
 }

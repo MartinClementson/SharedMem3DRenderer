@@ -142,6 +142,9 @@
     <Image Include="SharedMem3DRenderer.ico">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="texture.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\VertexShaderTexture.hlsl">
