@@ -27,7 +27,7 @@ public:
 	void Render();
 	void SetWorldMatrix(XMFLOAT4X4 &matrix);
 	void SetWorldMatrix(XMMATRIX&matrix);
-	void UpdateModelData(Vertex* newVertData, UINT newIndData);
+	void UpdateModelData(Vertex* newVertData, UINT newIndData, Float3* normalList);
 	void UpdateAllModelData(Vertex* vertices, UINT* indices, UINT numVerts, UINT numIndices);
 	void CreateVertexBuffer(Vertex* vertices, unsigned int amount);
 	void CreateLogicalIDTracker();

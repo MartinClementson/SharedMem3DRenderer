@@ -172,7 +172,7 @@ void ModelNode::SetWorldMatrix(XMMATRIX & matrix)
 
 }
 
-void ModelNode::UpdateModelData(Vertex* newVertData, UINT newIndData)
+void ModelNode::UpdateModelData(Vertex* newVertData, UINT newIndData, Float3* normalList)
 {
 	//for (size_t i = 0; i < this->vertCount; i++)
 	//{
@@ -186,12 +186,14 @@ void ModelNode::UpdateModelData(Vertex* newVertData, UINT newIndData)
 	//		break;
 	//	}
 	//}
+	unsigned int offset = 0;
 	for (size_t i = 0; i < this->vertCount; i++)
 	{
 		if (vertexData.get()[i].logicalIndex == newIndData)
 		{
-			newVertData->normal = vertexData.get()[i].normal; //for testing only it is very bad to do FY SKÄMS JOHAN
+//			newVertData->normal = vertexData.get()[i].normal; //for testing only it is very bad to do FY SKÄMS JOHAN
 			memcpy(&vertexData.get()[i], newVertData, sizeof(Vertex));
+			memcpy(&vertexData.get()[i].normal, &normalList[i], sizeof(Float3));
 			//this->indexData.get()[newIndData] = newIndData;
 		}
 	}

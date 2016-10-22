@@ -49,6 +49,7 @@ struct VertSegmentMessage //for n verts, but not a whole mesh,
 	char nodeName[256];
 	unsigned int nameLength;
 	unsigned int numVertices;
+	unsigned int numNormals;
 };
 
 struct VertexMessage // for single verts.
