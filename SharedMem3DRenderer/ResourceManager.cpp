@@ -154,12 +154,38 @@ void ResourceManager::AddNewMesh(string name,
 			else
 				tempModel->SetMaterial(sceneMaterials[string(materialName)]);
 		}
+		else
+			tempModel->SetMaterial(sceneMaterials["standard"]);
 
 	
 		gMutex->Lock();
 		sceneTransforms[name] = tempModel;
 		gMutex->Unlock();
 		isDirty = true;
+	}
+	else
+	{
+		
+		
+		if (sceneMaterials.find(string(materialName)) == sceneMaterials.end())
+		{ // if the material doesent exist, create a new one
+			MaterialNode* newMat = new MaterialNode(materialName); //deleted in destructor
+			newMat->Init(gDevice, gDeviceContext);
+			gMutex->Lock();
+			sceneMaterials[string(materialName)] = newMat;
+			((ModelNode*)sceneTransforms[name])->SetMaterial(newMat);
+			gMutex->Unlock();
+		}
+		else
+		{
+			gMutex->Lock();
+			((ModelNode*)sceneTransforms[name])->SetMaterial(sceneMaterials[string(materialName)]);
+			gMutex->Unlock();
+
+		}
+			
+
+
 	}
 }
 
