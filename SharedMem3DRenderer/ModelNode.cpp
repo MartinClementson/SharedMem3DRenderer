@@ -172,29 +172,18 @@ void ModelNode::SetWorldMatrix(XMMATRIX & matrix)
 
 }
 
-void ModelNode::UpdateModelData(Vertex* newVertData, UINT newIndData, Float3* normalList)
+void ModelNode::UpdateModelData(Vertex* newVertData, UINT newIndData, Float3* normalList, int* IDptr, int numNormals)
 {
-	//for (size_t i = 0; i < this->vertCount; i++)
-	//{
-	//	if (logicalIDs.get()[i].ID == newIndData)
-	//	{
-	//		newVertData->normal = vertexData.get()[i].normal; //for testing only it is very bad to do FY SKÄMS JOHAN
-	//		for (size_t j = 0; j < logicalIDs.get()[i].VertsWithID.size(); j++)
-	//		{
-	//			memcpy(logicalIDs.get()[i].VertsWithID.at(j), newVertData, sizeof(Vertex));
-	//		}
-	//		break;
-	//	}
-	//}
-	unsigned int offset = 0;
 	for (size_t i = 0; i < this->vertCount; i++)
 	{
 		if (vertexData.get()[i].logicalIndex == newIndData)
 		{
-//			newVertData->normal = vertexData.get()[i].normal; //for testing only it is very bad to do FY SKÄMS JOHAN
+			int temp = vertexData.get()[i].normalIndex;
+			Float2 temp2 = vertexData.get()[i].uv;
 			memcpy(&vertexData.get()[i], newVertData, sizeof(Vertex));
-			memcpy(&vertexData.get()[i].normal, &normalList[i], sizeof(Float3));
-			//this->indexData.get()[newIndData] = newIndData;
+			memcpy(&vertexData.get()[i].normal, &normalList[temp], sizeof(Float3));
+			vertexData.get()[i].uv = temp2;
+			vertexData.get()[i].normalIndex = temp;
 		}
 	}
 }

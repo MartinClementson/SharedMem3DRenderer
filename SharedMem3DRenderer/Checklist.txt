@@ -8,3 +8,11 @@ Change order if you want.
 - Update single vertices when changed in maya
 - Get camera, changed when changed in maya.
 - Get materials
+
+
+
+
+Johans:
+optimera forlop i vert update;
+resna upp maya biten för vert update;
+fixa så att bara de nödvändiga normalerna skickas över;

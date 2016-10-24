@@ -75,7 +75,8 @@ struct Vertex
 	Float3 binormal;
 	Float3 tangent;
 	Float2 uv;
-	float logicalIndex;
+	int logicalIndex;
+	int normalIndex;
 
 
 	Vertex(Float3 position, Float3 normal, Float3 binormal, Float3 tangent, Float2 uv)

@@ -89,26 +89,22 @@ bool MessageHandler::NewVertexSegment(VertSegmentMessage * msg)
 			ModelNode* test = (ModelNode*)sceneTransforms->at(msg->nodeName);
 
 			unsigned int offset = sizeof(VertSegmentMessage);
-			unsigned int normaloffset = 0;
+
 			Float3* normalptr = (Float3*)((char*)msg + offset);
 			offset += sizeof(Float3) * msg->numNormals;
-			Float3* normalList = new Float3[msg->numNormals];
 
-			for (size_t i = 0; i < msg->numNormals; i++)
-			{
-				memcpy(&normalList[i], normalptr + normaloffset, sizeof(Float3));
-				normaloffset += sizeof(Float3);
-			}
+			int* IDptr = (int*)((char*)msg + offset);
+			offset += sizeof(int) * msg->numNormals;
+
 			for (size_t i = 0; i < msg->numVertices; i++)
 			{
 				VertexMessage * vertMessage = (VertexMessage*)((char*)msg + offset);
 				Vertex VertData = vertMessage->vert;
 				UINT IndData = vertMessage->indexId;
 
-				test->UpdateModelData(&VertData, IndData, normalList);
+				test->UpdateModelData(&VertData, IndData, normalptr, IDptr, msg->numNormals);
 				offset += sizeof(VertexMessage);	
 			}
-			delete[] normalList;
 			test->Dirtify();
 
 		}
