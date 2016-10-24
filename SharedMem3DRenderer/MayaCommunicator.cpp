@@ -164,32 +164,32 @@ bool MessageHandler::UpdateCamera(CameraMessage * msg)
 			//	0, 1, 0, 0,
 			//	0, 0, 1, 0,
 			//	0, 0, 0, 1);
-			//DirectX::XMMATRIX proj = DirectX::XMMATRIX(msg->projMatrix);
+			DirectX::XMMATRIX proj = DirectX::XMMATRIX(msg->projMatrix);
 			////proj.r[2].m128_f32[0] *= -1;
 			////proj.r[2].m128_f32[1] *= -1;
 			////proj.r[2].m128_f32[3] *= -1;
-			//proj = XMMatrixTranspose(proj);
+			proj = XMMatrixTranspose(proj);
 			//proj.r[2].m128_f32[2] *= -1;
 			////proj = XMMatrixMultiply(proj, projMult);
 			//
  			DirectX::XMFLOAT4X4 projToSend;
 
-			//DirectX::XMStoreFloat4x4(&projToSend, proj);
+			DirectX::XMStoreFloat4x4(&projToSend, proj);
 
 			//Create projection Matrix
-			DirectX::XMMATRIX tempProj = XMMatrixPerspectiveFovLH(
-				(fovangleY),
-				(WINDOW_WIDTH/WINDOW_HEIGHT),
-				(nearZ),
-				(farZ)
-				);
-			
-			XMMATRIX frustumProj = tempProj;
-			//Transpose the Projcetion matrix
-			tempProj = XMMatrixTranspose(tempProj); 
-			
-			//Store The projection
-			 XMStoreFloat4x4(&projToSend, tempProj);
+		//DirectX::XMMATRIX tempProj = XMMatrixPerspectiveFovLH(
+		//	(fovangleY),
+		//	(WINDOW_WIDTH/WINDOW_HEIGHT),
+		//	(nearZ),
+		//	(farZ)
+		//	);
+		//
+		//XMMATRIX frustumProj = tempProj;
+		////Transpose the Projcetion matrix
+		//tempProj = XMMatrixTranspose(tempProj); 
+		//
+		////Store The projection
+		// XMStoreFloat4x4(&projToSend, tempProj);
 
 
 
