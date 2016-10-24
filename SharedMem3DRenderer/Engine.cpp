@@ -2,6 +2,7 @@
 #include "Engine.h"
 
 
+
 bool Engine::CreateDirect3DContext(HWND * handle)
 {
 
@@ -20,6 +21,12 @@ bool Engine::CreateDirect3DContext(HWND * handle)
 	scd.Windowed		     = WINDOWED;
 	scd.BufferDesc.RefreshRate.Numerator = 60; //fps cap
 	scd.BufferDesc.RefreshRate.Denominator = 1;
+
+//D3DPRESENT_PARAMETERS d3dpp;			// create a struct to hold various device information
+
+	//ZeroMemory(&d3dpp, sizeof(d3dpp));      // clear out the struct for use
+
+
 
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(
 		NULL,
@@ -62,7 +69,7 @@ bool Engine::CreateDirect3DContext(HWND * handle)
 	desc.BindFlags			= D3D11_BIND_DEPTH_STENCIL;
 	desc.CPUAccessFlags		= 0;
 	desc.MiscFlags		    = 0;
-
+	
 	hr = gDevice->CreateTexture2D(&desc, 0, &depthBuffer);
 
 	hr = gDevice->CreateDepthStencilView(depthBuffer, 0, &depthStencilView);
@@ -74,11 +81,13 @@ bool Engine::CreateDirect3DContext(HWND * handle)
 	dssDesc.DepthWriteMask   = D3D11_DEPTH_WRITE_MASK_ALL; //Default
 	dssDesc.DepthFunc        = D3D11_COMPARISON_LESS_EQUAL;
 
+
 	gDevice->CreateDepthStencilState(&dssDesc, &depthState);
 
 	gDeviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 	gDeviceContext->OMSetDepthStencilState(depthState, 1);
+
 
 
 

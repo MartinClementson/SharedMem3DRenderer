@@ -72,10 +72,19 @@ bool MaterialNode::CreateFromMessage(MaterialMessage* material, TextureFile* tex
 	this->materialData.specularRGB		= Float3ToXMFLOAT4(material->specularRGB);
 	this->materialData.specularValue	= material->specularVal;
 	
-	for (size_t i = 0; i < material->numTextures; i++) //switch textures
+	if (material->numTextures > 0)
 	{
-		textureFiles.at(textures[i].type) = textures[i];
-		texturesChanged = true;
+
+		for (size_t i = 0; i < material->numTextures; i++) //switch textures
+		{
+			textureFiles.at(textures[i].type) = textures[i];
+			texturesChanged = true;
+		}
+	}
+	else
+	{
+		this->materialData.usingDiffuseTex = FALSE;
+		this->materialData.usingNormalTex = FALSE;
 	}
 
 	isDirty = true;

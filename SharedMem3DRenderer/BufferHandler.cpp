@@ -40,7 +40,11 @@ bool BufferHandler::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceCo
 
 	hr = this->gDevice->CreateBuffer(&bufferDesc, nullptr, &buffers.bCameraBuffer.gD3Dbuffer);
 	if (SUCCEEDED(hr))
+	{
 		this->gDeviceContext->GSSetConstantBuffers(CAMERABUFFER_SLOT, 1, &buffers.bCameraBuffer.gD3Dbuffer);
+		this->gDeviceContext->PSSetConstantBuffers(CAMERABUFFER_SLOT, 1, &buffers.bCameraBuffer.gD3Dbuffer);
+
+	}
 	else
 		return false;
 
@@ -63,20 +67,20 @@ bool BufferHandler::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceCo
 		return false;
 
 
-	CD3D11_BUFFER_DESC bufferDescLight;
-	ZeroMemory(&bufferDescLight, sizeof(bufferDescLight));
-	bufferDescLight.ByteWidth			 = sizeof(LightBuffer);
-	bufferDescLight.BindFlags			 = D3D11_BIND_CONSTANT_BUFFER;
-	bufferDescLight.Usage				 = D3D11_USAGE_DYNAMIC;
-	bufferDescLight.CPUAccessFlags		 = D3D11_CPU_ACCESS_WRITE;
-	bufferDescLight.MiscFlags			 = 0;
-	bufferDescLight.StructureByteStride  = 0;
-
-	hr = this->gDevice->CreateBuffer(&bufferDescLight, nullptr, &buffers.bLightBuffer.gD3Dbuffer);
-	if (SUCCEEDED(hr))
-		this->gDeviceContext->PSSetConstantBuffers(LIGHTBUFFER_SLOT, 1, &buffers.bLightBuffer.gD3Dbuffer);
-	else
-		return false;
+	//CD3D11_BUFFER_DESC bufferDescLight;
+	//ZeroMemory(&bufferDescLight, sizeof(bufferDescLight));
+	//bufferDescLight.ByteWidth			 = sizeof(LightBuffer);
+	//bufferDescLight.BindFlags			 = D3D11_BIND_CONSTANT_BUFFER;
+	//bufferDescLight.Usage				 = D3D11_USAGE_DYNAMIC;
+	//bufferDescLight.CPUAccessFlags		 = D3D11_CPU_ACCESS_WRITE;
+	//bufferDescLight.MiscFlags			 = 0;
+	//bufferDescLight.StructureByteStride  = 0;
+	//
+	//hr = this->gDevice->CreateBuffer(&bufferDescLight, nullptr, &buffers.bLightBuffer.gD3Dbuffer);
+	//if (SUCCEEDED(hr))
+	//	this->gDeviceContext->PSSetConstantBuffers(LIGHTBUFFER_SLOT, 1, &buffers.bLightBuffer.gD3Dbuffer);
+	//else
+	//	return false;
 
 
 

@@ -14,19 +14,19 @@ void Camera::UpdateCamBuffer()
 	
 	
 	//Create projection Matrix
-	DirectX::XMMATRIX tempProj = XMMatrixPerspectiveFovLH(
-		(fovangleY),
-		(aspectRatio),
-		(nearZ),
-		(farZ)
-		);
-	
-	XMMATRIX frustumProj = tempProj;
-	//Transpose the Projcetion matrix
-	tempProj = XMMatrixTranspose(tempProj);
-	
-	//Store The projection
-	 XMStoreFloat4x4(&cameraBuffer.projection, tempProj);
+	//DirectX::XMMATRIX tempProj = XMMatrixPerspectiveFovLH(
+	//	(fovangleY),
+	//	(aspectRatio),
+	//	(nearZ),
+	//	(farZ)
+	//	);
+	//
+	//XMMATRIX frustumProj = tempProj;
+	////Transpose the Projcetion matrix
+	//tempProj = XMMatrixTranspose(tempProj); 
+	//
+	////Store The projection
+	// XMStoreFloat4x4(&cameraBuffer.projection, tempProj);
 
 
 	//_________________________________________________________________________________________
@@ -37,35 +37,20 @@ void Camera::UpdateCamBuffer()
     //XMFLOAT4 tempPos = XMFLOAT4(worldbuffer.worldMatrix._14, worldbuffer.worldMatrix._24, worldbuffer.worldMatrix._34, 1.0f);
 	//XMVECTOR pos = XMLoadFloat4(&tempPos);
 
-	DirectX::XMMATRIX tempView = XMMatrixLookAtLH(
-		(XMLoadFloat4(&camPosition)),
-		(XMLoadFloat4(&camTarget)),
-		(XMLoadFloat4(&camUp))
-		);
-
-	
-	tempView = XMMatrixTranspose(tempView);
+	//DirectX::XMMATRIX tempView = XMMatrixLookAtLH(
+	//	(XMLoadFloat4(&camPosition)),
+	//	(XMLoadFloat4(&camTarget)),
+	//	(XMLoadFloat4(&camUp))
+	//	);
+	//
+	//
+	//tempView = XMMatrixTranspose(tempView);
 	//XMStoreFloat4x4(&cameraBuffer.camView, tempView);
 	
-	this->cameraBuffer.camPos = camPosition;
 
 	
 	BufferHandler::GetInstance()->Buffers()->bCameraBuffer.UpdateBuffer(&cameraBuffer,&id);
-	//ID3D11Buffer* buffer = BufferHandler::GetInstance()->Buffers()->bCameraBuffer;
-	//
-	//D3D11_MAPPED_SUBRESOURCE mappedResource;
-	//ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	//
-	//gDeviceContext->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	//
-	//
-	//CameraBuffer* tempStructMatrices = (CameraBuffer*)mappedResource.pData;
-	//*tempStructMatrices = this->cameraBuffer;
-	//
-	//
-	//
-	//gDeviceContext->Unmap(buffer, 0);
-
+	
 
 }
 
@@ -78,11 +63,11 @@ bool Camera::Init(ID3D11Device *gDevice, ID3D11DeviceContext* gDeviceContext, st
 	return true;
 }
 
-bool Camera::UpdateViewAndProj(XMFLOAT4X4 & view, XMFLOAT4X4 & proj)
+bool Camera::UpdateViewAndProj(XMFLOAT4X4 & view, XMFLOAT4X4 & proj, Float3 camPos)
 {
-
+	cameraBuffer.camPos		= XMFLOAT4(camPos.x,camPos.y,camPos.z,1.0f);
 	cameraBuffer.camView    = view;
-	//cameraBuffer.projection = proj;
+	cameraBuffer.projection = proj;
 
 	isDirty = true;
 	

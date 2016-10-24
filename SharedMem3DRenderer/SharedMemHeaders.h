@@ -82,6 +82,8 @@ struct CameraMessage
 	unsigned int nameLength;
 	float viewMatrix[16];
 	float projMatrix[16];
+	Float3 camPos;
+
 };
 
 struct DeleteMessage

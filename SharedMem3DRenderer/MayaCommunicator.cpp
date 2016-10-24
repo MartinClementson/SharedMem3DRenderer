@@ -129,11 +129,7 @@ bool MessageHandler::UpdateCamera(CameraMessage * msg)
 
 	sceneTransforms = &ResourceManager::GetInstance()->sceneTransforms;
 
-	//if (sceneTransforms->find(msg->nodeName) != sceneTransforms->end())
-	//{
-		
-		//if (sceneTransforms->at(msg->nodeName)->IsType(Nodes::NodeType::CAMERA))
-		//{
+	
 
 			//the camera exists
 			DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
@@ -163,33 +159,45 @@ bool MessageHandler::UpdateCamera(CameraMessage * msg)
 			///////////////
 			//Projection
 
-			DirectX::XMMATRIX projMult = DirectX::XMMATRIX(
-				1, 0, 0, 0,
-				0, 1, 0, 0,
-				0, 0, 1, 0,
-				0, 0, 0, 1);
-			DirectX::XMMATRIX proj = DirectX::XMMATRIX(msg->projMatrix);
-			proj.r[2].m128_f32[0] *= -1;
-			proj.r[2].m128_f32[1] *= -1;
-			proj.r[2].m128_f32[2] *= -1;
-			proj.r[2].m128_f32[3] *= -1;
-			proj = XMMatrixTranspose(proj);
-			//proj = XMMatrixMultiply(proj, projMult);
-			
+			//DirectX::XMMATRIX projMult = DirectX::XMMATRIX(
+			//	1, 0, 0, 0,
+			//	0, 1, 0, 0,
+			//	0, 0, 1, 0,
+			//	0, 0, 0, 1);
+			//DirectX::XMMATRIX proj = DirectX::XMMATRIX(msg->projMatrix);
+			////proj.r[2].m128_f32[0] *= -1;
+			////proj.r[2].m128_f32[1] *= -1;
+			////proj.r[2].m128_f32[3] *= -1;
+			//proj = XMMatrixTranspose(proj);
+			//proj.r[2].m128_f32[2] *= -1;
+			////proj = XMMatrixMultiply(proj, projMult);
+			//
  			DirectX::XMFLOAT4X4 projToSend;
 
-			DirectX::XMStoreFloat4x4(&projToSend, proj);
+			//DirectX::XMStoreFloat4x4(&projToSend, proj);
 
-			((Camera*)sceneTransforms->at("persp"))->UpdateViewAndProj(viewToSend, projToSend);
-			//((Camera*)sceneTransforms->at(msg->nodeName))->UpdateViewAndProj(viewToSend, projToSend);
-			//sceneTransforms->at(msg->nodeName)->SetWorldMatrix(&matrixToSend);
-			//dynamic_cast<ModelNode*>(sceneTransforms->at(msg->nodeName))->SetWorldMatrix(matrixToSend);
-		//}
-		//else
-		//	return false;
-//	}
-	//else
-	//	return false;
+			//Create projection Matrix
+			DirectX::XMMATRIX tempProj = XMMatrixPerspectiveFovLH(
+				(fovangleY),
+				(WINDOW_WIDTH/WINDOW_HEIGHT),
+				(nearZ),
+				(farZ)
+				);
+			
+			XMMATRIX frustumProj = tempProj;
+			//Transpose the Projcetion matrix
+			tempProj = XMMatrixTranspose(tempProj); 
+			
+			//Store The projection
+			 XMStoreFloat4x4(&projToSend, tempProj);
+
+
+
+			Float3* pos = &((CameraMessage*)msg)->camPos;
+			
+
+			((Camera*)sceneTransforms->at("persp"))->UpdateViewAndProj(viewToSend, projToSend,msg->camPos);
+		
 	
 	return true;
 }
@@ -214,7 +222,6 @@ bool MessageHandler::TranslateMessage(char * msg, size_t length)
 	{
 		case MESH:
 		{
-	
 			MeshMessage * meshHeader = (MeshMessage*)(msg + sizeof(MainMessageHeader));
 			NewMesh(meshHeader);
 			break;

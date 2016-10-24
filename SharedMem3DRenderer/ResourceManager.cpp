@@ -37,50 +37,12 @@ bool ResourceManager::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDevice
 		return false;
 
 
-	//Vertex cubeVerts[8];
-	//
-	//cubeVerts[0].position = Float3(-0.5, 2.5,  0.5);		//0
-	//cubeVerts[1].position = Float3(-0.5, 0.0,  0.5);		//1
-	//cubeVerts[2].position = Float3(0.5, 0.0,   0.5);		//2
-	//cubeVerts[3].position = Float3(0.5, 2.5,   0.5);		//3
-	//cubeVerts[4].position = Float3(0.5, 0.0,  -0.5);		//4
-	//cubeVerts[5].position = Float3(0.5, 2.5,  -0.5);		//5
-	//cubeVerts[6].position = Float3(-0.5, 0.0, -0.5);		//6
-	//cubeVerts[7].position = Float3(-0.5, 2.5, -0.5);		//7
-	//
-	//
-	//cubeVerts[0].normal = Float3(0, 0, 1);		//0
-	//cubeVerts[1].normal = Float3(0, 0, 1);		//1
-	//cubeVerts[2].normal = Float3(0, 0, 1);		//2
-	//cubeVerts[3].normal = Float3(0, 0, 1);		//3
-	//cubeVerts[4].normal = Float3(0, 1, 0);		//4
-	//cubeVerts[5].normal = Float3(0, 1, 0);		//5
-	//cubeVerts[6].normal = Float3(0, 1, 0);		//6
-	//cubeVerts[7].normal = Float3(0, 1, 0);		//7
-	//
-	//UINT indices[36] =
-	//{
-	//	0,1,2,
-	//	0,2,3,
-	//	3,2,4,
-	//	3,4,5,
-	//	5,4,6,
-	//	5,6,7,
-	//	7,6,1,
-	//	7,1,0,
-	//	0,3,5,
-	//	0,5,7,
-	//	1,4,2,
-	//	1,6,4 };
-
 	Vertex planeVerts[4];
 
 	planeVerts[0].position = Float3(-1.0,  1.0, 0.0);		//0
 	planeVerts[1].position = Float3(-1.0, -1.0, 0.0);		//1
 	planeVerts[2].position = Float3(1.0,   1.0, 0.0);		//2
 	planeVerts[3].position = Float3(1.0,  -1.0, 0.0);		//3
-
-
 
 	planeVerts[0].normal = Float3(0, 0, 1);		//0
 	planeVerts[1].normal = Float3(0, 0, 1);		//1
