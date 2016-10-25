@@ -35,3 +35,11 @@ TODO efter 21/10
 
 kontrollera color från maya.
 lägg till callback i maya när color ändras
+
+
+
+
+Johans:
+optimera forlop i vert update;
+resna upp maya biten för vert update;
+fixa så att bara de nödvändiga normalerna skickas över;

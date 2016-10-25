@@ -75,6 +75,8 @@ struct Vertex
 	Float3 binormal;
 	Float3 tangent;
 	Float2 uv;
+	int logicalIndex;
+	int normalIndex;
 
 
 	Vertex(Float3 position, Float3 normal, Float3 binormal, Float3 tangent, Float2 uv)
@@ -102,7 +104,11 @@ struct Vertex
 	Vertex() {};
 };
 
-
+struct LogicalIndex
+{
+	std::vector<Vertex*> VertsWithID;
+	UINT ID = NULL;
+};
 
 struct WorldBuffer
 {

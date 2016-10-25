@@ -82,6 +82,45 @@ bool MessageHandler::NewMesh(MeshMessage * msg)
 	return true;
 }
 
+bool MessageHandler::NewVertexSegment(VertSegmentMessage * msg)
+{
+	std::map < string, TransformNode*> *sceneTransforms;
+
+	sceneTransforms = &ResourceManager::GetInstance()->sceneTransforms;
+
+	if (sceneTransforms->find(msg->nodeName) != sceneTransforms->end())
+	{
+		if (sceneTransforms->at(msg->nodeName)->IsType(Nodes::NodeType::MESH))
+		{
+			ModelNode* test = (ModelNode*)sceneTransforms->at(msg->nodeName);
+
+			unsigned int offset = sizeof(VertSegmentMessage);
+
+			Float3* normalptr = (Float3*)((char*)msg + offset);
+			offset += sizeof(Float3) * msg->numNormals;
+
+			int* IDptr = (int*)((char*)msg + offset);
+			offset += sizeof(int) * msg->numNormals;
+
+			for (size_t i = 0; i < msg->numVertices; i++)
+			{
+				VertexMessage * vertMessage = (VertexMessage*)((char*)msg + offset);
+				Vertex VertData = vertMessage->vert;
+				UINT IndData = vertMessage->indexId;
+
+				test->UpdateModelData(&VertData, IndData, normalptr, IDptr, msg->numNormals);
+				offset += sizeof(VertexMessage);	
+			}
+			test->Dirtify();
+
+		}
+	}
+	else
+		return false;
+
+	return true;
+}
+
 XMFLOAT4X4 MessageHandler::OpenGLMatrixToDirectX(XMMATRIX & glMatrix)
 {
 	DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
@@ -227,9 +266,12 @@ bool MessageHandler::TranslateMessage(char * msg, size_t length)
 			break;
 		}
 		case VERTSEGMENT:
+		{
+			VertSegmentMessage * vertSegmentMessage = (VertSegmentMessage*)(msg + sizeof(MainMessageHeader));
+			VertexMessage * vertMessage = (VertexMessage*)(msg + sizeof(MainMessageHeader) + sizeof(VertSegmentMessage));
+			NewVertexSegment(vertSegmentMessage);
 			break;
-		case VERTEX:
-			break;
+		}
 		case CAMERA:
 		{
 			CameraMessage * cameraMessage = (CameraMessage*)(msg + sizeof(MainMessageHeader));

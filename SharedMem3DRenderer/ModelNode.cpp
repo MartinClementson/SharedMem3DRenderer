@@ -7,8 +7,11 @@ void ModelNode::CreateVertexBuffer(Vertex * vertices, unsigned int amount)
 	if (this->vertexBuffer != nullptr)
 		SAFE_RELEASE(vertexBuffer);
 
-
-
+	if (vertexData == nullptr)
+	{
+		this->vertexData = std::shared_ptr<Vertex>(new Vertex[amount]);
+	}
+	memcpy(vertexData.get(), vertices, sizeof(Vertex) * amount);
 
 	D3D11_BUFFER_DESC bufferDesc;
 	memset(&bufferDesc, 0, sizeof(bufferDesc));
@@ -33,14 +36,47 @@ void ModelNode::CreateVertexBuffer(Vertex * vertices, unsigned int amount)
 
 }
 
+void ModelNode::CreateLogicalIDTracker()
+{
+	UINT length = 1;
+	this->logicalIDs = std::shared_ptr<LogicalIndex>(new LogicalIndex[this->vertCount]);
+	for (size_t i = 0; i < this->vertCount; i++)
+	{
+		if (logicalIDs.get()[i].ID == NULL)
+		{	
+			logicalIDs.get()[i].ID = i;
+			logicalIDs.get()[i].VertsWithID.reserve(4);
+		}
+	}
+	for (size_t j = 0; j < this->vertCount; j++)
+	{
+		for (size_t k = 0; k < this->vertCount; k++)
+		{
+			if (logicalIDs.get()[j].ID == vertexData.get()[k].logicalIndex)
+			{
+				logicalIDs.get()[j].VertsWithID.push_back(&vertexData.get()[k]);
+			}
+		}
+	}
+}
+
+void ModelNode::Dirtify()
+{
+	this->isDirty = true;
+	this->newModelData = true;
+}
+
 
 void ModelNode::CreateIndexBuffer(UINT * indices, unsigned int amount)
 {
 
 	if (this->indexBuffer != nullptr)
 		SAFE_RELEASE(indexBuffer);
-
-
+	if (indexData == nullptr)
+	{
+		this->indexData = std::shared_ptr<UINT>(new UINT[amount]);
+	}
+	memcpy(indexData.get(), indices, sizeof(UINT) * amount);
 
 	D3D11_BUFFER_DESC ibd;
 
@@ -90,9 +126,14 @@ void ModelNode::Render()
 		XMVECTOR worldDet = XMMatrixDeterminant(XMLoadFloat4x4(&worldbuffer.worldMatrix));
 		XMMATRIX normalWorld = XMMatrixInverse(&worldDet, XMLoadFloat4x4(&worldbuffer.worldMatrix));
 		XMStoreFloat4x4(&worldbuffer.normalWorldMatrix, XMMatrixTranspose(normalWorld));
+		if (newModelData)
+		{
+			this->CreateVertexBuffer(this->vertexData.get(), vertCount);
+			this->CreateIndexBuffer(this->indexData.get(), indexCount);
+			this->newModelData = false;
+		}
 
-
-		isDirty = false;
+		this->isDirty = false;
 	}
 
 	assert(materialRef != nullptr);
@@ -134,6 +175,34 @@ void ModelNode::SetWorldMatrix(XMMATRIX & matrix)
 	XMStoreFloat4x4(&worldbuffer.worldMatrix, matrix);
 	isDirty = true;
 
+}
+
+void ModelNode::UpdateModelData(Vertex* newVertData, UINT newIndData, Float3* normalList, int* IDptr, int numNormals)
+{
+	for (size_t i = 0; i < this->vertCount; i++)
+	{
+		if (vertexData.get()[i].logicalIndex == newIndData)
+		{
+			int temp = vertexData.get()[i].normalIndex;
+			Float2 temp2 = vertexData.get()[i].uv;
+			memcpy(&vertexData.get()[i], newVertData, sizeof(Vertex));
+			memcpy(&vertexData.get()[i].normal, &normalList[temp], sizeof(Float3));
+			vertexData.get()[i].uv = temp2;
+			vertexData.get()[i].normalIndex = temp;
+		}
+	}
+}
+
+void ModelNode::UpdateAllModelData(Vertex * vertices, UINT * indices, UINT numVerts, UINT numIndices)
+{
+	this->vertexData = std::shared_ptr<Vertex>(new Vertex[numVerts]);
+	memcpy(vertexData.get(), (char*)vertices, sizeof(Vertex) * numVerts);
+	this->vertCount = numVerts;
+	this->indexData = std::shared_ptr<UINT>(new UINT[numIndices]);
+	memcpy(indexData.get(), (char*)indices, sizeof(UINT) * numIndices);
+	this->indexCount = numIndices;
+	//this->CreateLogicalIDTracker();
+	this->Dirtify();
 }
 
 

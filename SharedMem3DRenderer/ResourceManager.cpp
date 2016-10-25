@@ -119,14 +119,19 @@ void ResourceManager::AddNewMesh(string name,
 		else
 			tempModel->SetMaterial(sceneMaterials["standard"]);
 
-	
 		gMutex->Lock();
 		sceneTransforms[name] = tempModel;
 		gMutex->Unlock();
+
 		isDirty = true;
 	}
 	else
 	{
+		ModelNode* tempModel = (ModelNode*)sceneTransforms[name];
+		gMutex->Lock();
+		tempModel->UpdateAllModelData(verts, indices, numVerts, numIndices);
+		gMutex->Unlock();
+
 		
 		
 		if (sceneMaterials.find(string(materialName)) == sceneMaterials.end())
@@ -147,7 +152,7 @@ void ResourceManager::AddNewMesh(string name,
 		}
 			
 
-
+		isDirty = true;
 	}
 }
 

@@ -46,6 +46,7 @@ void GS_main(
 	faceNormal.x = faceNormal.x * -1;
 	faceNormal.y = faceNormal.y * -1;
 	faceNormal.z = faceNormal.z * -1;
+
 	//////////////////////////////////////////////////
 	///////////Back-face culling test/////////////////
 
