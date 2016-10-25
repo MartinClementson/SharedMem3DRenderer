@@ -86,6 +86,7 @@ float3 normalToWorldSpace(float3 normalMapSample, float3 normal, float3 tangent)
 
 float4 PS_main(PS_IN input) : SV_TARGET
 {
+	return(diffuse);
 	//return float4(0.5f,0.5f,0.0f, 1);
 	//return float4((input.Normal + float3(0.2f,0.2f,0.2f)), 1);
 	//return float4(input.Pos);
