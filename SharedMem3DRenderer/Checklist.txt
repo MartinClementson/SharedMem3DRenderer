@@ -8,3 +8,38 @@ Change order if you want.
 - Update single vertices when changed in maya
 - Get camera, changed when changed in maya.
 - Get materials
+- Update name when changed in maya
+
+
+
+TODO: efter 18/10
+{
+	Gör att varje model sätter sitt material till active.  (Material har en -> SetActive())
+	Extrahera meshens materialNamn i maya. om materialet inte finns. skapa ett material med det namnet.
+
+	Gör en bool i material som kollar om den är active. (för att förhinda multipla material aktiveringar av samma material)
+	
+	Fortsätt att hämta ut materialInfo ifrån maya.
+
+	allt som behövs är här : 
+	http://help.autodesk.com/view/MAYAUL/2016/ENU/?guid=__cpp_ref__d3_d_viewport_renderer_2_d3_d_viewport_renderer_8cpp_example_html
+
+
+}
+
+
+HANTERA NAME CHANGE FÖR SAMTLIGA NODES!
+
+
+TODO efter 21/10
+
+kontrollera color från maya.
+lägg till callback i maya när color ändras
+
+
+
+
+Johans:
+optimera forlop i vert update;
+resna upp maya biten för vert update;
+fixa så att bara de nödvändiga normalerna skickas över;

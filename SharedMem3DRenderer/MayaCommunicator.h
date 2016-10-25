@@ -23,9 +23,11 @@
 class MessageHandler
 {
 private:
-	bool NewMesh	 (MeshMessage* msg);
-	bool Transform	 (TransformMessage* msg);
-	bool UpdateCamera(CameraMessage * msg);
+	bool NewMesh			(MeshMessage* msg);
+	bool NewTopology		(MeshMessage* msg);
+	bool NewVertexSegment	(VertSegmentMessage* msg);
+	bool Transform			(TransformMessage* msg);
+	bool UpdateCamera		(CameraMessage * msg);
 	XMFLOAT4X4 OpenGLMatrixToDirectX(XMMATRIX & glMatrix);
 public:
 	MessageHandler();

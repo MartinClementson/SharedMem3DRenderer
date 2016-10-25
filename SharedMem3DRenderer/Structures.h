@@ -1,6 +1,6 @@
 #pragma once
 #define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
-
+#include "SharedMem3DRenderer.h"
 namespace Nodes {
 
 	enum NodeType {
@@ -23,7 +23,7 @@ struct Float3
 		this->x = x;
 		this->y = y;
 		this->z = z;
-	}
+	};
 	Float3() {};
 
 	Float3(double* pos)
@@ -32,7 +32,7 @@ struct Float3
 		this->y = float(pos[1]);
 		this->z = float(pos[2]);
 
-	}
+	};
 
 	Float3& operator=(double* pos)
 	{
@@ -41,7 +41,7 @@ struct Float3
 		this->z = float(pos[2]);
 
 		return *this;
-	}
+	};
 };
 
 struct Float2
@@ -75,6 +75,8 @@ struct Vertex
 	Float3 binormal;
 	Float3 tangent;
 	Float2 uv;
+	int logicalIndex;
+	int normalIndex;
 
 
 	Vertex(Float3 position, Float3 normal, Float3 binormal, Float3 tangent, Float2 uv)
@@ -102,7 +104,11 @@ struct Vertex
 	Vertex() {};
 };
 
-
+struct LogicalIndex
+{
+	std::vector<Vertex*> VertsWithID;
+	UINT ID = NULL;
+};
 
 struct WorldBuffer
 {
@@ -122,7 +128,25 @@ struct CameraBuffer
 
 struct MaterialBuffer
 {
-	DirectX::XMFLOAT4X4 PLACEHOLDER;
+	DirectX::XMFLOAT4 diffuse;
+	DirectX::XMFLOAT4 ambient;
+	DirectX::XMFLOAT4 specularRGB;
+	float specularValue;
+	BOOL usingDiffuseTex;
+	BOOL usingNormalTex;
+	float padding;
+	MaterialBuffer()
+	{
+		 diffuse	   = DirectX::XMFLOAT4(0.5f,0.5f,0.5f,1.0f);
+		 ambient	   = DirectX::XMFLOAT4(0.0f,0.0f,0.0f,1.0f);
+		 specularRGB   = DirectX::XMFLOAT4(0.0f,0.0f,0.0f,1.0f);
+		 specularValue = 0.0f;
+		
+		 this->usingDiffuseTex = FALSE;
+		 this->usingNormalTex  = FALSE;
+		 DirectX::XMFLOAT3 padding = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+		
+	};
 
 };
 

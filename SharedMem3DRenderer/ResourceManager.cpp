@@ -32,59 +32,29 @@ bool ResourceManager::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDevice
 	this->gMutex		 =  std::unique_ptr<SharedMemory::SharedMutex>( new SharedMemory::SharedMutex(mutexName));
 	this->camera         = new Camera();
 	
-	testModel->Init(gDevice, gDeviceContext);
-	if (!camera->Init(gDevice, gDeviceContext))
+	testModel->Init(gDevice, gDeviceContext,"testModel");
+	if (!camera->Init(gDevice, gDeviceContext,"persp"))
 		return false;
 
 
-	Vertex cubeVerts[8];
+	
 
-	cubeVerts[0].position = Float3(-0.5, 2.5,  0.5);		//0
-	cubeVerts[1].position = Float3(-0.5, 0.0,  0.5);		//1
-	cubeVerts[2].position = Float3(0.5, 0.0,   0.5);		//2
-	cubeVerts[3].position = Float3(0.5, 2.5,   0.5);		//3
-	cubeVerts[4].position = Float3(0.5, 0.0,  -0.5);		//4
-	cubeVerts[5].position = Float3(0.5, 2.5,  -0.5);		//5
-	cubeVerts[6].position = Float3(-0.5, 0.0, -0.5);		//6
-	cubeVerts[7].position = Float3(-0.5, 2.5, -0.5);		//7
-
-
-	cubeVerts[0].normal = Float3(0, 0, 1);		//0
-	cubeVerts[1].normal = Float3(0, 0, 1);		//1
-	cubeVerts[2].normal = Float3(0, 0, 1);		//2
-	cubeVerts[3].normal = Float3(0, 0, 1);		//3
-	cubeVerts[4].normal = Float3(0, 1, 0);		//4
-	cubeVerts[5].normal = Float3(0, 1, 0);		//5
-	cubeVerts[6].normal = Float3(0, 1, 0);		//6
-	cubeVerts[7].normal = Float3(0, 1, 0);		//7
-
-	UINT indices[36] =
-	{
-		0,1,2,
-		0,2,3,
-		3,2,4,
-		3,4,5,
-		5,4,6,
-		5,6,7,
-		7,6,1,
-		7,1,0,
-		0,3,5,
-		0,5,7,
-		1,4,2,
-		1,6,4 };
-
-	this->testModel->CreateVertexBuffer(cubeVerts, 8);
-	this->testModel->CreateIndexBuffer(indices, 36);
-
-	//this->sceneTransforms["pCube1"] = testModel;
 	this->sceneTransforms["persp"]  = camera;
 
-
+	this->testMaterial = new MaterialNode();
+	testMaterial->Init(gDevice, gDeviceContext);
+	this->sceneMaterials["standard"] = testMaterial;
 
 	return true;
 }
 
-void ResourceManager::AddNewMesh(string name, Vertex * verts, UINT numVerts, UINT * indices, UINT numIndices, XMFLOAT4X4 * worldMatrix)
+void ResourceManager::AddNewMesh(string name, 
+	Vertex * verts, 
+	UINT numVerts,
+	UINT * indices, 
+	UINT numIndices,
+	XMFLOAT4X4 * worldMatrix,
+	char* materialName)
 {
 	while (isDirty) // make sure the rendering thread is up to date before changing
 	{
@@ -93,17 +63,67 @@ void ResourceManager::AddNewMesh(string name, Vertex * verts, UINT numVerts, UIN
 	if (sceneTransforms.find(name) == sceneTransforms.end())
 	{
 		 //only add if it doesent already exist
-		ModelNode * tempModel = new ModelNode();
-		tempModel->Init(gDevice, gDeviceContext);
+		ModelNode * tempModel = new ModelNode(); //memory freed in destructor
+		if (!tempModel->Init(gDevice, gDeviceContext,string(name)))
+		{
+			delete tempModel;
+			return;
+		}
 	
 		tempModel->CreateVertexBuffer(verts, numVerts);
 		tempModel->CreateIndexBuffer(indices, numIndices);
 		tempModel->SetWorldMatrix(*worldMatrix);
-	
-	//	tempNewModel = tempModel;
+		if (strlen(materialName) != 0)
+		{
+
+			if (sceneMaterials.find(string(materialName)) == sceneMaterials.end())
+			{ // if the material doesent exist, create a new one
+				MaterialNode* newMat = new MaterialNode(materialName); //deleted in destructor
+				newMat->Init(gDevice, gDeviceContext);
+				gMutex->Lock();
+				sceneMaterials[string(materialName)] = newMat;
+				gMutex->Unlock();
+				tempModel->SetMaterial(newMat);
+			}
+			else
+				tempModel->SetMaterial(sceneMaterials[string(materialName)]);
+		}
+		else
+			tempModel->SetMaterial(sceneMaterials["standard"]);
+
 		gMutex->Lock();
 		sceneTransforms[name] = tempModel;
 		gMutex->Unlock();
+
+		isDirty = true;
+	}
+	else
+	{
+		ModelNode* tempModel = (ModelNode*)sceneTransforms[name];
+		gMutex->Lock();
+		tempModel->UpdateAllModelData(verts, indices, numVerts, numIndices);
+		gMutex->Unlock();
+
+		
+		
+		if (sceneMaterials.find(string(materialName)) == sceneMaterials.end())
+		{ // if the material doesent exist, create a new one
+			MaterialNode* newMat = new MaterialNode(materialName); //deleted in destructor
+			newMat->Init(gDevice, gDeviceContext);
+			gMutex->Lock();
+			sceneMaterials[string(materialName)] = newMat;
+			((ModelNode*)sceneTransforms[name])->SetMaterial(newMat);
+			gMutex->Unlock();
+		}
+		else
+		{
+			gMutex->Lock();
+			((ModelNode*)sceneTransforms[name])->SetMaterial(sceneMaterials[string(materialName)]);
+			gMutex->Unlock();
+
+		}
+			
+
 		isDirty = true;
 	}
 }
@@ -113,6 +133,27 @@ ResourceManager::ResourceManager()
 	
 }
 
+
+void ResourceManager::AddNewMaterial(MaterialMessage * mat, TextureFile * textures)
+{
+
+	if (sceneMaterials.find(string(mat->matName)) == sceneMaterials.end())
+	{ //If it doesent exist already
+
+		MaterialNode* newMaterial = new MaterialNode(); // memory freed in destructor
+		newMaterial->Init(gDevice, gDeviceContext);
+
+		newMaterial->CreateFromMessage(mat, textures);
+
+		this->sceneMaterials[string(mat->matName)] = newMaterial;
+	}
+	else //it already exists
+	{
+
+		sceneMaterials[string(mat->matName)]->CreateFromMessage(mat, textures);
+	}
+
+}
 
 bool ResourceManager::RenderModels()
 {
@@ -149,7 +190,6 @@ bool ResourceManager::DeleteNode(char * name)
 
 ResourceManager::~ResourceManager()
 {
-	//delete testModel;
 	
 	for (auto iterator = sceneTransforms.begin(); iterator != sceneTransforms.end(); ++iterator) 
 	{
@@ -159,5 +199,12 @@ ResourceManager::~ResourceManager()
 	sceneTransforms.clear();
 
 
+
+	for (auto iterator = sceneMaterials.begin(); iterator != sceneMaterials.end(); ++iterator)
+	{
+		MaterialNode * node = iterator->second;
+		delete node;
+	}
+	sceneMaterials.clear();
 	
 }
