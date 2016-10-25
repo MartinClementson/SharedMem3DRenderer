@@ -22,8 +22,8 @@ private:
 	void UpdateCamBuffer(); 
 public:
 	void UpdateIfDirty();
-	bool Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceContext);
-	bool UpdateViewAndProj(XMFLOAT4X4& view, XMFLOAT4X4& proj);
+	bool Init(ID3D11Device *gDevice, ID3D11DeviceContext* gDeviceContext, std::string id);
+	bool UpdateViewAndProj(XMFLOAT4X4& view, XMFLOAT4X4& proj,Float3 camPos);
 	void SetPosition(XMFLOAT3& newPos);
 	void SetPosition(Float3 &newPos);
 	void SetPosition(float& x, float& y, float& z);

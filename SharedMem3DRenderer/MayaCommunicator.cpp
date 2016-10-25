@@ -50,15 +50,15 @@ MayaCommunicator::~MayaCommunicator()
 bool MessageHandler::NewMesh(MeshMessage * msg)
 {
 
-
+	//The memory allocated here goes into the model node on the main thread
 	std::shared_ptr<Vertex> vertices = std::shared_ptr<Vertex>(new Vertex[msg->vertexCount]);
+	std::shared_ptr<UINT>   indices  = std::shared_ptr<UINT>(new UINT[msg->indexCount]);
 
 	unsigned int offset = sizeof(MeshMessage);
 	memcpy(vertices.get(), (char*)msg + offset, sizeof(Vertex)*msg->vertexCount);
 
 	offset += sizeof(Vertex)*msg->vertexCount;
 
-	std::shared_ptr<UINT> indices = std::shared_ptr<UINT>(new UINT[msg->indexCount]);
 
 	memcpy(indices.get(), (char*)msg + offset, sizeof(UINT)* msg->indexCount);
 
@@ -71,7 +71,13 @@ bool MessageHandler::NewMesh(MeshMessage * msg)
 	DirectX::XMFLOAT4X4 matrixToSend = OpenGLMatrixToDirectX(world);
 
 
-	ResourceManager::GetInstance()->AddNewMesh(msg->nodeName, vertices.get(), msg->vertexCount, indices.get(), msg->indexCount, &matrixToSend);
+	ResourceManager::GetInstance()->AddNewMesh(msg->nodeName, 
+		vertices.get(),
+		msg->vertexCount, 
+		indices.get(), 
+		msg->indexCount, 
+		&matrixToSend,
+		msg->materialName);
 
 	return true;
 }
@@ -84,7 +90,7 @@ XMFLOAT4X4 MessageHandler::OpenGLMatrixToDirectX(XMMATRIX & glMatrix)
 		0, 0, 1, 0,
 		0, 0, 0, 1);
 
-	glMatrix = XMMatrixMultiply(glMatrix, mToggle_XZ);
+	//glMatrix = XMMatrixMultiply(glMatrix, mToggle_XZ);
 	glMatrix = XMMatrixTranspose(glMatrix);
 
 	XMFLOAT4X4 toReturn;
@@ -95,8 +101,6 @@ XMFLOAT4X4 MessageHandler::OpenGLMatrixToDirectX(XMMATRIX & glMatrix)
 
 bool MessageHandler::Transform(TransformMessage * msg)
 {
-
-
 
 	std::map < string, TransformNode*> *sceneTransforms;
 
@@ -121,21 +125,11 @@ bool MessageHandler::Transform(TransformMessage * msg)
 
 bool MessageHandler::UpdateCamera(CameraMessage * msg)
 {
-
-	
-
-
-
-
 	std::map < string, TransformNode*> *sceneTransforms;
 
 	sceneTransforms = &ResourceManager::GetInstance()->sceneTransforms;
 
-	//if (sceneTransforms->find(msg->nodeName) != sceneTransforms->end())
-	//{
-		
-		//if (sceneTransforms->at(msg->nodeName)->IsType(Nodes::NodeType::CAMERA))
-		//{
+	
 
 			//the camera exists
 			DirectX::XMMATRIX mToggle_XZ = DirectX::XMMATRIX(
@@ -165,33 +159,45 @@ bool MessageHandler::UpdateCamera(CameraMessage * msg)
 			///////////////
 			//Projection
 
-			DirectX::XMMATRIX projMult = DirectX::XMMATRIX(
-				1, 0, 0, 0,
-				0, 1, 0, 0,
-				0, 0, 1, 0,
-				0, 0, 0, 1);
+			//DirectX::XMMATRIX projMult = DirectX::XMMATRIX(
+			//	1, 0, 0, 0,
+			//	0, 1, 0, 0,
+			//	0, 0, 1, 0,
+			//	0, 0, 0, 1);
 			DirectX::XMMATRIX proj = DirectX::XMMATRIX(msg->projMatrix);
-			proj.r[2].m128_f32[0] *= -1;
-			proj.r[2].m128_f32[1] *= -1;
-			proj.r[2].m128_f32[2] *= -1;
-			proj.r[2].m128_f32[3] *= -1;
+			////proj.r[2].m128_f32[0] *= -1;
+			////proj.r[2].m128_f32[1] *= -1;
+			////proj.r[2].m128_f32[3] *= -1;
 			proj = XMMatrixTranspose(proj);
-			//proj = XMMatrixMultiply(proj, projMult);
-			
+			//proj.r[2].m128_f32[2] *= -1;
+			////proj = XMMatrixMultiply(proj, projMult);
+			//
  			DirectX::XMFLOAT4X4 projToSend;
 
 			DirectX::XMStoreFloat4x4(&projToSend, proj);
 
-			((Camera*)sceneTransforms->at("persp"))->UpdateViewAndProj(viewToSend, projToSend);
-			//((Camera*)sceneTransforms->at(msg->nodeName))->UpdateViewAndProj(viewToSend, projToSend);
-			//sceneTransforms->at(msg->nodeName)->SetWorldMatrix(&matrixToSend);
-			//dynamic_cast<ModelNode*>(sceneTransforms->at(msg->nodeName))->SetWorldMatrix(matrixToSend);
-		//}
-		//else
-		//	return false;
-//	}
-	//else
-	//	return false;
+			//Create projection Matrix
+		//DirectX::XMMATRIX tempProj = XMMatrixPerspectiveFovLH(
+		//	(fovangleY),
+		//	(WINDOW_WIDTH/WINDOW_HEIGHT),
+		//	(nearZ),
+		//	(farZ)
+		//	);
+		//
+		//XMMATRIX frustumProj = tempProj;
+		////Transpose the Projcetion matrix
+		//tempProj = XMMatrixTranspose(tempProj); 
+		//
+		////Store The projection
+		// XMStoreFloat4x4(&projToSend, tempProj);
+
+
+
+			Float3* pos = &((CameraMessage*)msg)->camPos;
+			
+
+			((Camera*)sceneTransforms->at("persp"))->UpdateViewAndProj(viewToSend, projToSend,msg->camPos);
+		
 	
 	return true;
 }
@@ -216,7 +222,6 @@ bool MessageHandler::TranslateMessage(char * msg, size_t length)
 	{
 		case MESH:
 		{
-	
 			MeshMessage * meshHeader = (MeshMessage*)(msg + sizeof(MainMessageHeader));
 			NewMesh(meshHeader);
 			break;
@@ -239,6 +244,13 @@ bool MessageHandler::TranslateMessage(char * msg, size_t length)
 		}
 		case MATERIAL:
 		{
+			std::map < string, MaterialNode*> *sceneMaterials;
+			sceneMaterials = &ResourceManager::GetInstance()->sceneMaterials;
+			MaterialMessage * matMessage = (MaterialMessage*)(msg + sizeof(MainMessageHeader));
+
+			TextureFile* textures = (TextureFile*)(msg + sizeof(MainMessageHeader) + sizeof(MaterialMessage));
+			//This will also handle updating of already existing materials
+			ResourceManager::GetInstance()->AddNewMaterial(matMessage, textures); 
 			break;
 		}
 	

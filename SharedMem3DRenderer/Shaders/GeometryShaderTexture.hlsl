@@ -70,7 +70,7 @@ void GS_main(
    // {
 		//combining the matrices for simpler use, also more efficient
         matrix combinedMatrix = mul(world, mul(view, projection));
-
+		//matrix combinedMatrix = mul(projection, mul(view, world));
 		//matrix combinedMatrix = mul(world, view);
 		//combinedMatrix = mul(combinedMatrix, projection);
         for (uint i = 0; i < 3; i++)

@@ -27,13 +27,25 @@ public:
 	bool UpdateIfDirty();
 	bool Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceContext);
 	std::map < string, TransformNode*> sceneTransforms;
+	std::map < string, MaterialNode*> sceneMaterials;
 	ModelNode* testModel; //temp
-	void AddNewMesh(string name, Vertex* verts, UINT numVerts, UINT* indices, UINT numIndices, XMFLOAT4X4* worldMatrix);
+	void AddNewMesh(string name,
+		Vertex* verts,
+		UINT numVerts, 
+		UINT* indices, 
+		UINT numIndices,
+		XMFLOAT4X4* worldMatrix,
+		char* materialName);
 	vector<ModelNode*>* Models() { return &this->models; };
+
+	MaterialNode* testMaterial;
+	
 	static ResourceManager* GetInstance() {
 		static ResourceManager instance;
 		return &instance;
 	}
+
+	void AddNewMaterial(MaterialMessage* mat, TextureFile* textures);
 
 	bool RenderModels();
 	bool DeleteNode(string name);
