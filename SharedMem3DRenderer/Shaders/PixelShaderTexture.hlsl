@@ -91,7 +91,7 @@ float4 PS_main(PS_IN input) : SV_TARGET
 	//return float4((input.Normal + float3(0.2f,0.2f,0.2f)), 1);
 	//return float4(input.Pos);
     float4 lightPosition = float4(5.0f, 10.0f, 0.0f,1.0f);
-	
+	float4 lightColor    = float4(1.0f, 1.0f, 1.0f, 1.0f);
     float3 normal = input.Normal;
 
 	//return camPos;
@@ -148,15 +148,19 @@ else
 
 float3 ambientCol = ambient.xyz;
 
-float3 diffuse = color * fDot + ambientCol;
+float3 diffuse = lightColor.xyz * fDot ;
 
 //finalCol = textureSample* finalCol; // texture * (diffuse + ambient)
-float3 finalCol = diffuse + specularLight;
+float3 finalCol;
+if (specularValue > 0.0f)
+	finalCol = saturate(color* (ambient.xyz + diffuse) + specularLight);
+else
+	finalCol = saturate(color* (ambient.xyz + diffuse));
 
 
-//finalCol.x = min(finalCol.x, 1.0f);
-//finalCol.y = min(finalCol.y, 1.0f);
-//finalCol.z = min(finalCol.z, 1.0f);
+finalCol.x = saturate(finalCol.x);
+finalCol.y = saturate(finalCol.y);
+finalCol.z = saturate(finalCol.z);
 
 	//float4 col = { finalCol,1.0 };
   //

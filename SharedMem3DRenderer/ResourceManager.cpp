@@ -37,42 +37,14 @@ bool ResourceManager::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDevice
 		return false;
 
 
-	Vertex planeVerts[4];
-
-	planeVerts[0].position = Float3(-1.0,  1.0, 0.0);		//0
-	planeVerts[1].position = Float3(-1.0, -1.0, 0.0);		//1
-	planeVerts[2].position = Float3(1.0,   1.0, 0.0);		//2
-	planeVerts[3].position = Float3(1.0,  -1.0, 0.0);		//3
-
-	planeVerts[0].normal = Float3(0, 0, 1);		//0
-	planeVerts[1].normal = Float3(0, 0, 1);		//1
-	planeVerts[2].normal = Float3(0, 0, 1);		//2
-	planeVerts[3].normal = Float3(0, 0, 1);		//3
 	
-	planeVerts[0].uv = Float2(0.0f, 0.0f);
-	planeVerts[1].uv = Float2(0.0f, 1.0f);
-	planeVerts[2].uv = Float2(1.0f, 0.0f);
-	planeVerts[3].uv = Float2(1.0f, 1.0f);
-	UINT indices[6] =
-	{
-		0,1,2,
-		2,1,3,
-	 };
 
-
-
-	this->testModel->CreateVertexBuffer(planeVerts, 4);
-	this->testModel->CreateIndexBuffer(indices, 6);
-
-	//this->sceneTransforms["pCube1"] = testModel;
-	this->sceneTransforms["testModel"] = testModel;
 	this->sceneTransforms["persp"]  = camera;
 
 	this->testMaterial = new MaterialNode();
 	testMaterial->Init(gDevice, gDeviceContext);
 	this->sceneMaterials["standard"] = testMaterial;
 
-	testModel->SetMaterial(testMaterial);
 	return true;
 }
 
